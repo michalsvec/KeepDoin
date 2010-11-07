@@ -1,3 +1,5 @@
-#Sun Nov 07 16:20:32 CET 2010
+#Sun Nov 07 19:09:14 CET 2010
 eclipse.preferences.version=1
 include_path=0;/tam-server
+phpVersion=php5.3
+use_asp_tags_as_php=false
