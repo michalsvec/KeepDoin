@@ -1,4 +1,3 @@
-/temp/cache/*
-/temp/sessions/*
+/temp/*
 /log/*.log
 /used-libs
