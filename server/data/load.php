@@ -12,7 +12,7 @@
 // settings
 define('PRODUCTION', FALSE);
 define('DROP_TABLES', TRUE);
-define('CLI_TASK', TRUE);
+define('CLI_TASK', (php_sapi_name() == 'cli'));
 
 // directories
 define('ROOT_DIR', dirname(__FILE__) . '/..');
@@ -26,7 +26,7 @@ define('SCHEMA_DIR', ROOT_DIR . '/data');
 define('SQL_DIR', ROOT_DIR . ((PRODUCTION)? '/data/fixtures' : '/data/test-fixtures'));
 
 // new line setting
-$nl = (defined('CLI_TASK'))? "\n" : '<br>';
+$nl = (CLI_TASK)? "\n" : '<br>';
 
 // hello
 echo "Welcome to task for loading database schema and fixtures!$nl$nl";
@@ -36,17 +36,6 @@ if (!PRODUCTION) {
 }
 echo $nl;
 echo "Drop tables? [" . ((DROP_TABLES)? 'yes' : 'no') . "].$nl$nl";
-
-// confirm
-if (CLI_TASK) {
-	echo "Continue? [y/n]$nl";
-	$continue = trim(fgets(STDIN));
-	if ($continue != 'y') {
-		echo "Cancelled...$nl";
-		exit;
-	}
-	echo $nl;
-}
 
 // bootstrap
 require LIBS_DIR . '/Nette/loader.php';
