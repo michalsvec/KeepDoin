@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:orientation="vertical">
+	
+	<!-- hlavicka s hlavnim infem o userovi -->
+	
+	<LinearLayout
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:padding="5dp">
+       
+      <!-- ikona uzivatele -->
+      <ImageView
+        android:layout_width="100px"
+        android:layout_height="100px"
+        android:src="@drawable/sample_1" />
+      
+      <!-- jmeno uzivatele -->
+      <TextView
+          android:text="jmeno uzivatele"
+          android:gravity="center"
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"/>
+	</LinearLayout>
+	 
+	<!-- nejaky zobrazeni uloh -->
+	<TextView
+      android:text="zobrazeni uloh"
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content">
+	</TextView>
+
+	<!-- badges -->
+	<GridView
+      android:id="@+id/badges"
+      android:orientation="horizontal"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="1">
+	</GridView>
+</LinearLayout>

@@ -8,14 +8,20 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 public class ImageAdapter extends BaseAdapter {
-	 private Context mContext;
+	private Context mContext;
+	private int count; 
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, int count) {
         mContext = c;
+        this.count = count;
     }
 
     public int getCount() {
-        return mThumbIds.length;
+    	// pokud zadam velky cislo, vratim maximum obrazku, nebo kdyz je nula, tak vypise vsechny obrazky
+    	if(count > mThumbIds.length || count == 0)
+    		return mThumbIds.length;
+    	else
+    		return this.count;
     }
 
     public Object getItem(int position) {
@@ -31,7 +37,7 @@ public class ImageAdapter extends BaseAdapter {
         ImageView imageView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
+            imageView.setLayoutParams(new GridView.LayoutParams(75, 75));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(8, 8, 8, 8);
         } else {
