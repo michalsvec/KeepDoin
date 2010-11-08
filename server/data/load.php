@@ -15,7 +15,9 @@ define('DROP_TABLES', TRUE);
 define('CLI_TASK', (php_sapi_name() == 'cli'));
 
 // directories
-define('ROOT_DIR', dirname(__FILE__) . '/..');
+if (!defined('ROOT_DIR')) {
+    define('ROOT_DIR', dirname(__FILE__) . '/..');
+}
 
 define('WWW_DIR', ROOT_DIR . '/public');
 define('APP_DIR', ROOT_DIR . '/app');
