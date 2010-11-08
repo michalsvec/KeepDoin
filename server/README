@@ -26,4 +26,4 @@ Examples of use
 - POST friendship:
     curl -H 'Accept: application/json' \
 -H 'Content-Type: application/json' \
--X POST -d '{"user1_id":"1","user2_id":"2"}' http://localhost/edu/tam/server/public/api/friendship
+-X POST -d '{"user1_id":"1","user2_id":"2"}' http://todogame.michalsvec.cz/api/friendship
