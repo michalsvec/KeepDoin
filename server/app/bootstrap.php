@@ -14,16 +14,19 @@ require LIBS_DIR . '/Nette/loader.php';
 Debug::$strictMode = TRUE;
 Debug::enable();
 
-Environment::loadConfig();
+$config = Environment::loadConfig();
 
 $application = Environment::getApplication();
 $application->errorPresenter = 'Error';
 //$application->catchExceptions = TRUE;
 
+dibi::connect($config->database);
+
 $router = $application->getRouter();
 
-$router[] = new Route('api/<action>', array(
+$router[] = new Route('api/<action>/<id>', array(
     'presenter' => 'Server',
+    'id' => NULL,
 ));
 
 $application->run();

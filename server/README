@@ -1,0 +1,29 @@
+API Server
+==========
+
+PHP RESTful API server.
+
+Installation
+------------
+
+1) Put all files somewhere into HTTP server root (e.g. Apache).
+2) Be sure to have only 'public' folder accessible via HTTP requests.
+3) Be sure to have 'log' and 'temp' directories writable.
+4) Setup database connection in 'app/config.ini'.
+5) Create database in your MySQL.
+6) In command line (CLI PHP needed!) launch 'php data/load.php'. This
+   script should install database contents. Schema is always the same,
+   but according to settings in the script (see contents of 'data/load.php')
+   loads 'test-fixtures' (development) or 'fixtures' (production).
+7) Database & server should be ready now!
+
+Examples of use
+---------------
+
+- GET user:
+    curl http://localhost/edu/tam/server/public/api/user/1
+    
+- POST friendship:
+    curl -H 'Accept: application/json' \
+-H 'Content-Type: application/json' \
+-X POST -d '{"user1_id":"1","user2_id":"2"}' http://localhost/edu/tam/server/public/api/friendship

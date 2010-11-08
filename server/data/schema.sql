@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS `badges` (
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
+  `name` varchar(100) COLLATE utf8_czech_ci NOT NULL COMMENT 'custom name',
   `priority` int(10) unsigned NOT NULL COMMENT '= order within user''s categories',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
@@ -77,10 +78,11 @@ CREATE TABLE IF NOT EXISTS `ranks` (
 
 CREATE TABLE IF NOT EXISTS `tasks` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) COLLATE utf8_czech_ci NOT NULL,
   `category_id` int(10) unsigned NOT NULL,
   `priority_id` int(10) unsigned NOT NULL,
   `deadline` datetime DEFAULT NULL,
-  `current_reward_cache` int(11) NOT NULL COMMENT 'current reward (last computed, cache)',
+  `current_reward_cache` int(11) NOT NULL DEFAULT '0' COMMENT 'current reward (last computed, cache)',
   `is_done` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`,`priority_id`)
