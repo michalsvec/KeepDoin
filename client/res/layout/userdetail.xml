@@ -21,7 +21,14 @@
       
       <!-- jmeno uzivatele -->
       <TextView
-          android:text="jmeno uzivatele"
+          android:id="@+id/real_name"
+          android:gravity="center"
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"/>
+          
+       <TextView
+          android:id="@+id/rank"
           android:gravity="center"
           android:layout_width="wrap_content"
           android:layout_height="fill_parent"
