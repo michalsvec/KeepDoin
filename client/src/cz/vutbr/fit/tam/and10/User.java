@@ -9,19 +9,23 @@ import org.json.JSONObject;
 public class User {
 
 	private int userId;
-	private int rank_id;
+	private int rankId;
 	private String real_name;
 	private String email;
 	
 	
 	
 	public User(int id) {
-		
+		this.userId = id;
+	}
+
+	
+	public void loadData() {
 		GameModel model = new GameModel();
 		JSONObject json = null;
 
 		try {
-			json = model.getUserinfo(1);
+			json = model.getUserinfo(this.userId);
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -30,9 +34,8 @@ public class User {
 			e.printStackTrace();
 		}
 
-		this.userId = id;
 		try {
-			this.rank_id = json.getInt("rank_id");
+			this.rankId = json.getInt("rank_id");
 			this.real_name = json.getString("real_name");
 			this.email = json.getString("email");
 		
@@ -43,20 +46,31 @@ public class User {
 	}
 
 
+	public int getId() {
+		return this.userId;
+	}
+
+
 	public String getName() {
 		return real_name;
 	}
+	public void setName(String name) {
+		this.real_name = name; 
+	}
 
-	
+
 	public String getEmail() {
 		return email;
 	}
-	
+	public void setEmail(String email) {
+		this.email = email; 
+	}
+
 	
 	public String getRank() {
-		return Integer.toString(rank_id);
+		return Integer.toString(rankId);
 	}
-	
-	
-	
+	public void setName(int rank) {
+		this.rankId = rank; 
+	}
 }

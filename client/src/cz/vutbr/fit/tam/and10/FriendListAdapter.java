@@ -1,27 +1,24 @@
 package cz.vutbr.fit.tam.and10;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public class ImageAdapter extends BaseAdapter {
+public class FriendListAdapter extends BaseAdapter {
 	private Context mContext;
-	private int count; 
-
-    public ImageAdapter(Context c, int count) {
+	User friends[] = null;
+	
+    public FriendListAdapter(Context c, User friends[]) {
         mContext = c;
-        this.count = count;
+        this.friends = friends; 
     }
 
     public int getCount() {
-    	// pokud zadam velky cislo, vratim maximum obrazku, nebo kdyz je nula, tak vypise vsechny obrazky
-    	if(count > mThumbIds.length || count == 0)
-    		return mThumbIds.length;
-    	else
-    		return this.count;
+   		return friends.length;
     }
 
     public Object getItem(int position) {
@@ -34,19 +31,25 @@ public class ImageAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        View view;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(75, 75));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(8, 8, 8, 8);
+
+            LayoutInflater li = LayoutInflater.from(mContext);
+            view = li.inflate(R.layout.friendicon, null);
+
+            TextView tv = (TextView)view.findViewById(R.id.icon_text);
+            String[] nameTokens = this.friends[position].getName().split(" ");
+			tv.setText(nameTokens[0]);
+
+			ImageView iv = (ImageView)view.findViewById(R.id.icon_image);
+			iv.setImageResource(mThumbIds[position]);
         } else {
-            imageView = (ImageView) convertView;
+        	view = (View) convertView;
         }
 
-        imageView.setImageResource(mThumbIds[position]);
-        return imageView;
+        return view;
     }
+
 
     // references to our images
     private Integer[] mThumbIds = {

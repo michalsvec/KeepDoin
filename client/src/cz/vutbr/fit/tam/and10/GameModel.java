@@ -34,17 +34,18 @@ public class GameModel {
 	public JSONObject getUserinfo(int user_id) throws ClientProtocolException, IOException, JSONException {
 		JSONObject json = new JSONObject();
 		String requestURL = this.serverURL + "user/" + user_id;
-		
-		
 		json = this.processGetRequest(requestURL);
 		return json;
 	}
 	
 	
 	
-	public void getFriendsList(int user_id) {
-		
-		//HttpGet request = new HttpGet(url + combinedParams);
+	public JSONObject getFriendsList() throws ClientProtocolException, IOException, JSONException {
+
+		JSONObject json = new JSONObject();
+		String requestURL = this.serverURL + "users/";
+		json = this.processGetRequest(requestURL);
+		return json;
 		
 	} 
 

@@ -15,6 +15,7 @@
        
       <!-- ikona uzivatele -->
       <ImageView
+        android:id="@+id/avatar"
         android:layout_width="100px"
         android:layout_height="100px"
         android:src="@drawable/sample_1" />
@@ -37,7 +38,7 @@
 	 
 	<!-- nejaky zobrazeni uloh -->
 	<TextView
-      android:text="zobrazeni uloh"
+      android:text="zobrazeni uloh:\n----------------------\nBadges:"
       android:orientation="horizontal"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content">
@@ -46,9 +47,13 @@
 	<!-- badges -->
 	<GridView
       android:id="@+id/badges"
-      android:orientation="horizontal"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content"
-      android:layout_weight="1">
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:columnWidth="60dp"
+    android:numColumns="auto_fit"
+    android:verticalSpacing="5dp"
+    android:horizontalSpacing="10dp"
+    android:stretchMode="columnWidth"
+    android:gravity="center">
 	</GridView>
 </LinearLayout>
