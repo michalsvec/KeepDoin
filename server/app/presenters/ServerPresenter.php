@@ -127,6 +127,20 @@ class ServerPresenter extends BasePresenter
         // TODO post-db hook to compute rewards every time
     }
     
+    public function renderGetUsers()
+    {
+    	$this->data = array();
+    	
+        // tasks
+        $this->data['users'] = dibi::query('
+            SELECT id, real_name, rank_id
+            FROM [users]
+        ')->fetchAll();
+        
+    }
+    
+    
+    
     public function renderPostFriendship()
     {
     	dibi::query('INSERT INTO [friendships]', (array)$this->getInput());
