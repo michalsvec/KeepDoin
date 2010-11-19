@@ -1,7 +1,7 @@
 <?php
 
 // the identification of this site
-define('SITE', 'todogame');
+define('SITE', 'keepdoin');
 
 // absolute filesystem path to the web root
 define('WWW_DIR', dirname(__FILE__));

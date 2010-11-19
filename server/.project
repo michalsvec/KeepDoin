@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>ToDoGame Server</name>
+	<name>KeepDoin Server</name>
 	<comment></comment>
 	<projects>
+		<project>KeepDoin</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
