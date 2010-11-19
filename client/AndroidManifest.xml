@@ -3,8 +3,8 @@
       package="cz.vutbr.fit.tam.and10"
       android:versionCode="1"
       android:versionName="0.1">
-    <application android:icon="@drawable/icon" android:label="@string/app_name">
-        <activity android:name=".ToDoGame" android:label="@string/app_name">
+    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
+        <activity android:label="@string/app_name" android:name="KeepDoin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,4 +20,5 @@
     <!-- internet connection security permission -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 
+<uses-sdk android:minSdkVersion="3"></uses-sdk>
 </manifest> 
