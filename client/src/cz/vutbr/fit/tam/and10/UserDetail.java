@@ -11,7 +11,6 @@ public class UserDetail extends Activity {
         super.onCreate(savedInstanceState);
 
         // launch intent - we get user ID from extra
-        Intent intent = new Intent();
         Bundle extras = getIntent().getExtras();
         int userId = extras.getInt("userId");
         

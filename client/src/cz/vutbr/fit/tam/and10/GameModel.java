@@ -15,11 +15,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
 public class GameModel {
 
-	private String serverURL = "http://todogame.michalsvec.cz/api/";
+	private static String serverURL = "http://todogame.michalsvec.cz/api/";
 	
 	
 	/**
@@ -32,7 +34,7 @@ public class GameModel {
 	 */
 	public JSONObject getUserinfo(int user_id) throws ClientProtocolException, IOException, JSONException {
 		JSONObject json = new JSONObject();
-		String requestURL = this.serverURL + "user/" + user_id;
+		String requestURL = serverURL + "user/" + user_id;
 		json = this.processGetRequest(requestURL);
 		return json;
 	}
@@ -40,9 +42,8 @@ public class GameModel {
 	
 	
 	public JSONObject getFriendsList() throws ClientProtocolException, IOException, JSONException {
-
 		JSONObject json = new JSONObject();
-		String requestURL = this.serverURL + "users/";
+		String requestURL = serverURL + "users/";
 		json = this.processGetRequest(requestURL);
 		return json;
 		
@@ -60,7 +61,7 @@ public class GameModel {
 	 * @throws IOException
 	 * @throws JSONException 
 	 */
-	private JSONObject processGetRequest(String url) throws ClientProtocolException, IOException, JSONException {
+	private static JSONObject processGetRequest(String url) throws ClientProtocolException, IOException, JSONException {
 		
 		HttpClient httpClient = new DefaultHttpClient();
 
@@ -90,7 +91,10 @@ public class GameModel {
                 return json;
 				
 			}
-		} 
+		}
+		else {
+			return null;
+		}
 		return null;
 	}
 
@@ -126,5 +130,153 @@ public class GameModel {
         }
         return sb.toString();
     }
-	
+
+ 
+ 
+    /**
+     * Attempts to authenticate the user credentials on the server.
+     * 
+     * @param username The user's username
+     * @param password The user's password to be authenticated
+     * @param handler The main UI thread's handler instance.
+     * @param context The caller Activity's context
+     * @return Thread The thread on which the network mOperations are executed.
+     */
+    public static Thread attemptAuth(final String username, final String password, final Handler handler, final Context context) {
+        
+    	final Runnable runnable = new Runnable() {
+            public void run() {
+                authenticate(username, password, handler, context);
+            }
+        };
+        // run on background thread.
+        return GameModel.performOnBackgroundThread(runnable);
+    }
+
+
+
+    /**
+     * Executes the network requests on a separate thread.
+     * 
+     * @param runnable The runnable instance containing network mOperations to
+     *        be executed.
+     */
+    public static Thread performOnBackgroundThread(final Runnable runnable) {
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    runnable.run();
+                } finally {
+
+                }
+            }
+        };
+        t.start();
+        return t;
+    }    
+
+
+
+    /**
+     * Connects to the server, authenticates the provided username and password.
+     * 
+     * @param username The user's username
+     * @param password The user's password
+     * @param handler The hander instance from the calling UI thread.
+     * @param context The context of the calling Activity.
+     * @return boolean The boolean result indicating whether the user was
+     *         successfully authenticated.
+     */
+    public static boolean authenticate(String username, String password, Handler handler, final Context context) {
+
+		JSONObject json = new JSONObject();
+		String requestURL = serverURL + "login/?gmail="+username+"&password="+password;
+		try {
+			json = processGetRequest(requestURL);
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Log.i("ToDoGame", "json loaded");
+		sendResult(true, handler, context);
+		
+		
+		return false;
+
+//		
+//        final HttpResponse resp;
+//
+//        final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+//        params.add(new BasicNameValuePair(PARAM_USERNAME, username));
+//        params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
+//        HttpEntity entity = null;
+//        try {
+//            entity = new UrlEncodedFormEntity(params);
+//        } catch (final UnsupportedEncodingException e) {
+//            // this should never happen.
+//            throw new AssertionError(e);
+//        }
+//        final HttpPost post = new HttpPost(AUTH_URI);
+//        post.addHeader(entity.getContentType());
+//        post.setEntity(entity);
+//        maybeCreateHttpClient();
+//
+//        try {
+//            resp = mHttpClient.execute(post);
+//            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+//                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                    Log.v(TAG, "Successful authentication");
+//                }
+//                sendResult(true, handler, context);
+//                return true;
+//            } else {
+//                if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                    Log.v(TAG, "Error authenticating" + resp.getStatusLine());
+//                }
+//                sendResult(false, handler, context);
+//                return false;
+//            }
+//        } catch (final IOException e) {
+//            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                Log.v(TAG, "IOException when getting authtoken", e);
+//            }
+//            sendResult(false, handler, context);
+//            return false;
+//        } finally {
+//            if (Log.isLoggable(TAG, Log.VERBOSE)) {
+//                Log.v(TAG, "getAuthtoken completing");
+//            }
+//        }
+    }
+
+
+
+    /**
+     * Sends the authentication response from server back to the caller main UI
+     * thread through its handler.
+     * 
+     * @param result The boolean holding authentication result
+     * @param handler The main UI thread's handler instance.
+     * @param context The caller Activity's context.
+     */
+    private static void sendResult(final Boolean result, final Handler handler,
+        final Context context) {
+        if (handler == null || context == null) {
+            return;
+        }
+        handler.post(new Runnable() {
+            public void run() {
+                ((KeepDoin) context).onAuthenticationResult(result);
+            }
+        });
+    }
+    
 }

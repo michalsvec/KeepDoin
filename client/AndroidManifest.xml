@@ -15,7 +15,8 @@
         <activity android:name=".FriendsTab" android:icon="@drawable/ic_tab_artists" android:label="Friends"></activity>
         <activity android:name=".MeTab" android:icon="@drawable/ic_tab_artists" android:label="Me"></activity>
         <activity android:name=".UserDetail" android:label="User detail"></activity>
-    </application>
+    <activity android:name="MainWindow"></activity>
+</application>
     
     <!-- internet connection security permission -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
