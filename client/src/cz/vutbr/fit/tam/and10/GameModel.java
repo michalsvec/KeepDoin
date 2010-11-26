@@ -72,13 +72,13 @@ public class GameModel {
 	 * @throws JSONException 
 	 */
 	private static JSONObject processHttpRequest(String url, RESTMethods type, List<NameValuePair> params) throws ClientProtocolException, IOException, JSONException {
-		Log.i("KeepDoin", "processGetRequest("+url+")");
+		Log.i("KeepDoin", "processHttpRequest("+url+")");
 		
 		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response;
 		int status;
 
-
+		// TODO: write next REST methods, when needed
 		if(type == RESTMethods.POST) {
 			Log.i("KeepDoin", "RESTMethods.POST");
 			HttpPost request = new HttpPost(url);
@@ -119,7 +119,7 @@ public class GameModel {
 
                 // Closing the input stream will trigger connection release
                 instream.close();
-                
+
                 return json;
 				
 			}
@@ -216,9 +216,9 @@ public class GameModel {
      * Connects to the server, authenticates the provided username and password.
      * 
      * @param username The user's username
-     * @param password The user's password
-     * @param handler The hander instance from the calling UI thread.
-     * @param context The context of the calling Activity.
+     * @param type     Registration/login
+     * @param handler  The hander instance from the calling UI thread.
+     * @param context  The context of the calling Activity.
      * @return boolean The boolean result indicating whether the user was
      *         successfully authenticated.
      */
@@ -230,7 +230,7 @@ public class GameModel {
 
 		// type of request - either login or registration
 		String typeParam = "login";
-		List<NameValuePair> params = new ArrayList<NameValuePair>(1);
+		//List<NameValuePair> params = new ArrayList<NameValuePair>(1);
 		
 		try {
 			if(type.equals("registration")) {
@@ -243,12 +243,13 @@ public class GameModel {
 				typeParam = "login";
 				Log.i("KeepDoin", "type: GET");
 			}
-			
-			params.add(new BasicNameValuePair("username", accountName));
-			String requestURL = serverURL + typeParam +"/";
+
+			// params are for future use
+			//params.add(new BasicNameValuePair("email", accountName));
+			String requestURL = serverURL + typeParam +"/"+accountName;
 			Log.d("KeepDoin", "requestUrl:"+requestURL);
 
-			json = processHttpRequest(requestURL, method, params);
+			json = processHttpRequest(requestURL, method, null);
 		} catch (ClientProtocolException e) {
 			Log.e("KeepDoin", "ClientProtocolException");
 			e.printStackTrace();
@@ -261,11 +262,24 @@ public class GameModel {
 		}
 
 		Log.i("ToDoGame", "authenticate json loaded");
-
+		Log.i("KeepDoin", json.toString());
+		
 		// return from thread
 		if(json != null) {
 			Log.i("KeepDoin", "auth json okay");
-			sendResult(true, handler, context);
+			
+			boolean status = false;
+			try {
+				status = json.getBoolean("status");
+			} catch (JSONException e1) {
+				Log.e("KeepDoin", " JSONException status reading");
+				e1.printStackTrace();
+			}
+			
+			if(status)
+				sendResult(true, handler, context);
+			else
+				sendResult(false, handler, context);
 		}
 		else {
 			Log.e("KeepDoin", "auth json null");

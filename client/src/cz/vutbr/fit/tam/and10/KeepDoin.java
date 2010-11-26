@@ -89,7 +89,7 @@ public class KeepDoin extends Activity {
             // uzivatel uz je prihlasen, normalne startujeme aplikaci
             if(logged) {
             	Log.i("KeepDoin", "user logged - starting app");
-            	finishLogin();
+            	finishAuth();
             }
             // neprihlasen (prvni prhlaseni, nebo smazani preferences) 
             // nabidne se registrace, nebo login
@@ -194,7 +194,7 @@ public class KeepDoin extends Activity {
 
         if (authType == authTypes.AUTH_LOGIN) {
         	if(result)
-        		finishLogin();
+        		finishAuth();
         	else {
         		Log.e("KeepDoin", "onAuthenticationResult: AUTH_LOGIN fail");
                 mMessage = (TextView) findViewById(R.id.message);
@@ -209,6 +209,8 @@ public class KeepDoin extends Activity {
 	            SharedPreferences.Editor editor = settings.edit();
 	            editor.putBoolean("userLogged", true);
 	            editor.commit();	// need to commit changes before it ends
+	            
+	            finishAuth();
         	}
         	else {
         		Log.e("KeepDoin", "onAuthenticationResult: AUTH_REG fail");
@@ -227,12 +229,12 @@ public class KeepDoin extends Activity {
 
     /**
      * 
-     * po uspesnem prihlaseni se zobrazi timto obrazovka(aktivita) s aplikaci
+     * po uspesnem prihlaseni/registraci se zobrazi timto obrazovka(aktivita) s aplikaci
      * 
      * @param the confirmCredentials result.
      */
-    protected void finishLogin() {
-        Log.i("KeepDoin", "finishLogin()");
+    protected void finishAuth() {
+        Log.i("KeepDoin", "finishAuth()");
 
         Intent intent = new Intent(KeepDoin.this, MainWindow.class);
 

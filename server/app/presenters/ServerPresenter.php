@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Keep Doin'
+ * KeepGoin'
  *
  * @author Jan Javorek <honza@javorek.net>
  * @copyright Copyright (c) 2010 Jan Javorek
@@ -138,9 +138,48 @@ class ServerPresenter extends BasePresenter
         ')->fetchAll();
         
     }
-    
-    
-    
+
+
+
+	/**
+	 * TODO: maybe add some extra parameters
+	 */
+	public function renderPostRegistration($id)
+    {
+    	$email = $id;
+		$user = dibi::query('
+		    SELECT *
+		    FROM [users]
+		    WHERE [email] = %s
+		', $email)->fetch();
+
+		if(empty($user)) {
+			dibi::query('INSERT INTO [users]', array('email' => $email));
+			$this->data['status'] = 'true';
+		}
+		else {
+			$this->data['status'] = 'false';
+		}
+	}
+
+
+
+    public function renderGetLogin($id)
+    {
+    	$user = dibi::query('
+            SELECT *
+            FROM [users] 
+            WHERE [email]=%s
+        ', $id)->fetch();
+        
+        if(!empty($user))
+			$this->data['status'] = 'true';
+		else
+			$this->data['status'] = 'false';
+    }
+
+
+
     public function renderPostFriendship()
     {
     	dibi::query('INSERT INTO [friendships]', (array)$this->getInput());
