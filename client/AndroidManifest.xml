@@ -11,10 +11,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainWindow"></activity>
-        <activity android:icon="@drawable/ic_tab_artists" android:label="Now" android:name=".activities.NowTab"></activity>
-        <activity android:icon="@drawable/ic_tab_artists" android:label="All" android:name=".activities.AllTab"></activity>
-        <activity android:icon="@drawable/ic_tab_artists" android:label="Friends" android:name=".activities.FriendsTab"></activity>
-        <activity android:icon="@drawable/ic_tab_artists" android:label="Me" android:name=".activities.MeTab"></activity>
+        <activity android:label="Now" android:name=".activities.NowTab" android:icon="@drawable/ico_tab_now"></activity>
+        <activity android:label="All" android:name=".activities.AllTab" android:icon="@drawable/ico_tab_all"></activity>
+        <activity android:label="Friends" android:name=".activities.FriendsTab" android:icon="@drawable/ico_tab_friends"></activity>
+        <activity android:label="Me" android:name=".activities.MeTab" android:icon="@drawable/ico_tab_me"></activity>
         <activity android:label="User detail" android:name=".activities.UserDetail"></activity>
         
     </application>
@@ -24,5 +24,5 @@
     <!--  get account for login and registration - we are using google account in phone  -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-<uses-sdk android:minSdkVersion="3"></uses-sdk>
+	<uses-sdk android:minSdkVersion="3"></uses-sdk>
 </manifest> 

@@ -3,11 +3,9 @@
     <string name="hello">Hello World, KeepDoin!</string>
     <string name="app_name">Keep Doin\'</string>
 
-    <string name="login_header_text">You need to sign in or sign up. </string>
-    <string name="login_activity_username_label">Google account</string>
-    <string name="login_activity_password_label">Password</string>
-    <string name="login_activity_sign_up_button">Sign up</string>
-    <string name="login_activity_sign_in_button">Sign in</string>
+    <string name="login_message">Application is using Google account from your phone.</string>
+    <string name="login_activity_sign_up_button">Registration</string>
+    <string name="login_activity_sign_in_button">Login</string>
     <string name="login_activity_loginfail">Login failed. Register first.</string>
     <string name="login_activity_regfail">Registration failed.</string>
     <string name="ui_activity_authenticating">Authenticating</string>

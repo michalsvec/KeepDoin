@@ -7,13 +7,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cz.vutbr.fit.tam.and10.FriendListAdapter;
-import cz.vutbr.fit.tam.and10.GameModel;
-import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.User;
-import cz.vutbr.fit.tam.and10.R.id;
-import cz.vutbr.fit.tam.and10.R.layout;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +14,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import cz.vutbr.fit.tam.and10.FriendListAdapter;
+import cz.vutbr.fit.tam.and10.GameModel;
+import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.User;
 
 public class FriendsTab extends Activity {
 	

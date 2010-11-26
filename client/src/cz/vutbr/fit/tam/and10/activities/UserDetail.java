@@ -1,15 +1,12 @@
 package cz.vutbr.fit.tam.and10.activities;
 
-import cz.vutbr.fit.tam.and10.BadgesAdapter;
-import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.User;
-import cz.vutbr.fit.tam.and10.R.id;
-import cz.vutbr.fit.tam.and10.R.layout;
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.GridView;
 import android.widget.TextView;
+import cz.vutbr.fit.tam.and10.BadgesAdapter;
+import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.User;
 
 public class UserDetail extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
@@ -20,7 +17,7 @@ public class UserDetail extends Activity {
         int userId = extras.getInt("userId");
         
         // nastaveni layoutu pro friendy
-        setContentView(R.layout.userdetail);
+        setContentView(R.layout.user_detail);
 
         GridView gridview = (GridView) findViewById(R.id.badges);
         gridview.setAdapter(new BadgesAdapter(this, 6));

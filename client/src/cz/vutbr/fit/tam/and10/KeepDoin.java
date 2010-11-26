@@ -84,8 +84,10 @@ public class KeepDoin extends Activity {
         // v SharedPreferences
         else {
         	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-            boolean logged = settings.getBoolean("userLogged", false);
-            
+            // TODO: pro testovaci ucely vzdy vyskoci uvodni obrazovka - pak smazat
+        	//boolean logged = settings.getBoolean("userLogged", false);
+        	boolean logged = false;
+        	
             // uzivatel uz je prihlasen, normalne startujeme aplikaci
             if(logged) {
             	Log.i("KeepDoin", "user logged - starting app");
@@ -197,7 +199,7 @@ public class KeepDoin extends Activity {
         		finishAuth();
         	else {
         		Log.e("KeepDoin", "onAuthenticationResult: AUTH_LOGIN fail");
-                mMessage = (TextView) findViewById(R.id.message);
+                mMessage = (TextView) findViewById(R.id.notices);
                 mMessage.setText(getText(R.string.login_activity_loginfail));
         	}
         }
@@ -214,13 +216,13 @@ public class KeepDoin extends Activity {
         	}
         	else {
         		Log.e("KeepDoin", "onAuthenticationResult: AUTH_REG fail");
-                mMessage = (TextView) findViewById(R.id.message);
+                mMessage = (TextView) findViewById(R.id.notices);
                 mMessage.setText(getText(R.string.login_activity_regfail));
         	}
         
         } else {
         	Log.e("KeepDoin", "onAuthenticationResult: UNKNOWN ERROR");
-            mMessage = (TextView) findViewById(R.id.message);
+            mMessage = (TextView) findViewById(R.id.notices);
             mMessage.setText(getText(R.string.unknown_error));
         }
     }

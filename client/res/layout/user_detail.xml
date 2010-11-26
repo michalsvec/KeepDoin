@@ -11,29 +11,28 @@
       android:orientation="horizontal"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content"
-      android:padding="5dp">
+      android:padding="5dp" android:background="@drawable/gradient_user_profile">
        
       <!-- ikona uzivatele -->
       <ImageView
         android:id="@+id/avatar"
-        android:layout_width="100px"
-        android:layout_height="100px"
-        android:src="@drawable/sample_1" />
+        android:src="@drawable/android_avatar" android:layout_height="50dp" android:layout_width="60dp"/>
       
-      <!-- jmeno uzivatele -->
-      <TextView
-          android:id="@+id/real_name"
-          android:gravity="center"
-          android:layout_width="wrap_content"
-          android:layout_height="fill_parent"
-          android:layout_weight="1"/>
-          
-       <TextView
-          android:id="@+id/rank"
-          android:gravity="center"
-          android:layout_width="wrap_content"
-          android:layout_height="fill_parent"
-          android:layout_weight="1"/>
+      <LinearLayout
+      android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="horizontal">
+     	      <!-- jmeno uzivatele -->
+	      <TextView
+	          android:id="@+id/real_name"
+	          android:layout_width="wrap_content"
+	          android:layout_height="fill_parent"
+	          android:layout_weight="1" android:text="Jmeno uzivatele" android:textSize="20dp" android:textColor="#fff" android:gravity="center_vertical" android:layout_marginLeft="10dp" android:textStyle="bold"/>
+
+	        <TextView
+	          android:id="@+id/rank"
+	          android:layout_width="wrap_content"
+	          android:layout_height="fill_parent"
+	          android:layout_weight="1" android:text="rank #1" android:textSize="20dp" android:textColor="#fff" android:gravity="right|center_vertical" android:layout_marginRight="5dp"/>
+	    </LinearLayout>
 	</LinearLayout>
 	 
 	<!-- nejaky zobrazeni uloh -->
