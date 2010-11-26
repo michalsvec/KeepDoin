@@ -1,4 +1,4 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.activities;
 
 import android.app.Activity;
 import android.os.Bundle;

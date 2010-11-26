@@ -4,14 +4,20 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +28,9 @@ import android.util.Log;
 public class GameModel {
 
 	private static String serverURL = "http://todogame.michalsvec.cz/api/";
+	
+
+	private enum RESTMethods { GET, POST, DELETE, UPDATE} 
 	
 	
 	/**
@@ -35,7 +44,7 @@ public class GameModel {
 	public JSONObject getUserinfo(int user_id) throws ClientProtocolException, IOException, JSONException {
 		JSONObject json = new JSONObject();
 		String requestURL = serverURL + "user/" + user_id;
-		json = this.processGetRequest(requestURL);
+		json = processHttpRequest(requestURL, RESTMethods.GET, null);
 		return json;
 	}
 	
@@ -44,7 +53,7 @@ public class GameModel {
 	public JSONObject getFriendsList() throws ClientProtocolException, IOException, JSONException {
 		JSONObject json = new JSONObject();
 		String requestURL = serverURL + "users/";
-		json = this.processGetRequest(requestURL);
+		json = processHttpRequest(requestURL, RESTMethods.GET, null);
 		return json;
 		
 	} 
@@ -56,31 +65,53 @@ public class GameModel {
 	 * 
 	 * @author misa
 	 * @source http://senior.ceng.metu.edu.tr/2009/praeda/2009/01/11/a-simple-restful-client-at-android/
+	 * @source http://www.androidsnippets.org/snippets/36/index.html
 	 * @param url
 	 * @throws ClientProtocolException
 	 * @throws IOException
 	 * @throws JSONException 
 	 */
-	private static JSONObject processGetRequest(String url) throws ClientProtocolException, IOException, JSONException {
+	private static JSONObject processHttpRequest(String url, RESTMethods type, List<NameValuePair> params) throws ClientProtocolException, IOException, JSONException {
+		Log.i("KeepDoin", "processGetRequest("+url+")");
 		
 		HttpClient httpClient = new DefaultHttpClient();
+		HttpResponse response;
+		int status;
 
-		HttpGet request = new HttpGet(url);
-		HttpResponse response = httpClient.execute(request);
-		int status = response.getStatusLine().getStatusCode();
-		
+
+		if(type == RESTMethods.POST) {
+			Log.i("KeepDoin", "RESTMethods.POST");
+			HttpPost request = new HttpPost(url);
+			if(params != null)
+				request.setEntity(new UrlEncodedFormEntity(params));
+
+			response = httpClient.execute(request);
+			status = response.getStatusLine().getStatusCode();
+		}
+		//else if(type == RESTMethods.GET) {
+		else {
+			Log.i("KeepDoin", "RESTMethods.GET");
+			HttpGet request = new HttpGet(url);
+
+			response = httpClient.execute(request);
+			status = response.getStatusLine().getStatusCode();
+		}
+
+
 		// we assume that the response body contains the error message
 		if (status == HttpStatus.SC_OK) {
+			Log.i("KeepDoin", "HttpStatus == OK");
 			
 			// Get hold of the response entity
 			HttpEntity entity = response.getEntity();
 			
 			if (entity != null) {
+				Log.i("KeepDoin", "Entity == OK");
 
 				// A Simple JSON Response Read
                 InputStream instream = entity.getContent();
                 String result= convertStreamToString(instream);
-                Log.i("ToDoGame",result);
+                Log.i("ToDoGame", result);
  
                 // A Simple JSONObject Creation
                 JSONObject json=new JSONObject(result);
@@ -88,15 +119,18 @@ public class GameModel {
 
                 // Closing the input stream will trigger connection release
                 instream.close();
+                
                 return json;
 				
 			}
 		}
 		else {
+			Log.e("KeepDoin", "HttpStatus != OK");
 			return null;
 		}
 		return null;
 	}
+
 
 
 	/**
@@ -136,17 +170,17 @@ public class GameModel {
     /**
      * Attempts to authenticate the user credentials on the server.
      * 
-     * @param username The user's username
-     * @param password The user's password to be authenticated
+     * @param accountName google account stored in phone
+     * @param type registration or login
      * @param handler The main UI thread's handler instance.
      * @param context The caller Activity's context
      * @return Thread The thread on which the network mOperations are executed.
      */
-    public static Thread attemptAuth(final String username, final String password, final Handler handler, final Context context) {
-        
+    public static Thread attemptAuth(final String accountName, final String type, final Handler handler, final Context context) {
+    	Log.i("KeepDoin","attemptAuth()");
     	final Runnable runnable = new Runnable() {
             public void run() {
-                authenticate(username, password, handler, context);
+                authenticate(accountName, type, handler, context);
             }
         };
         // run on background thread.
@@ -174,7 +208,7 @@ public class GameModel {
         };
         t.start();
         return t;
-    }    
+    }
 
 
 
@@ -188,73 +222,57 @@ public class GameModel {
      * @return boolean The boolean result indicating whether the user was
      *         successfully authenticated.
      */
-    public static boolean authenticate(String username, String password, Handler handler, final Context context) {
-
+    public static boolean authenticate(String accountName, String type, Handler handler, final Context context) {
+    	Log.i("KeepDoin", "authenticate()");
+    	
 		JSONObject json = new JSONObject();
-		String requestURL = serverURL + "login/?gmail="+username+"&password="+password;
+		RESTMethods method; 
+
+		// type of request - either login or registration
+		String typeParam = "login";
+		List<NameValuePair> params = new ArrayList<NameValuePair>(1);
+		
 		try {
-			json = processGetRequest(requestURL);
+			if(type.equals("registration")) {
+				method = RESTMethods.POST;
+				typeParam = "registration";
+				Log.i("KeepDoin", "type: POST");
+			}
+			else {
+				method = RESTMethods.GET;
+				typeParam = "login";
+				Log.i("KeepDoin", "type: GET");
+			}
+			
+			params.add(new BasicNameValuePair("username", accountName));
+			String requestURL = serverURL + typeParam +"/";
+			Log.d("KeepDoin", "requestUrl:"+requestURL);
+
+			json = processHttpRequest(requestURL, method, params);
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
+			Log.e("KeepDoin", "ClientProtocolException");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Log.e("KeepDoin", " IOException");
 			e.printStackTrace();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			Log.e("KeepDoin", " JSONException");
 			e.printStackTrace();
 		}
-		
-		Log.i("ToDoGame", "json loaded");
-		sendResult(true, handler, context);
-		
-		
-		return false;
 
-//		
-//        final HttpResponse resp;
-//
-//        final ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-//        params.add(new BasicNameValuePair(PARAM_USERNAME, username));
-//        params.add(new BasicNameValuePair(PARAM_PASSWORD, password));
-//        HttpEntity entity = null;
-//        try {
-//            entity = new UrlEncodedFormEntity(params);
-//        } catch (final UnsupportedEncodingException e) {
-//            // this should never happen.
-//            throw new AssertionError(e);
-//        }
-//        final HttpPost post = new HttpPost(AUTH_URI);
-//        post.addHeader(entity.getContentType());
-//        post.setEntity(entity);
-//        maybeCreateHttpClient();
-//
-//        try {
-//            resp = mHttpClient.execute(post);
-//            if (resp.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-//                if (Log.isLoggable(TAG, Log.VERBOSE)) {
-//                    Log.v(TAG, "Successful authentication");
-//                }
-//                sendResult(true, handler, context);
-//                return true;
-//            } else {
-//                if (Log.isLoggable(TAG, Log.VERBOSE)) {
-//                    Log.v(TAG, "Error authenticating" + resp.getStatusLine());
-//                }
-//                sendResult(false, handler, context);
-//                return false;
-//            }
-//        } catch (final IOException e) {
-//            if (Log.isLoggable(TAG, Log.VERBOSE)) {
-//                Log.v(TAG, "IOException when getting authtoken", e);
-//            }
-//            sendResult(false, handler, context);
-//            return false;
-//        } finally {
-//            if (Log.isLoggable(TAG, Log.VERBOSE)) {
-//                Log.v(TAG, "getAuthtoken completing");
-//            }
-//        }
+		Log.i("ToDoGame", "authenticate json loaded");
+
+		// return from thread
+		if(json != null) {
+			Log.i("KeepDoin", "auth json okay");
+			sendResult(true, handler, context);
+		}
+		else {
+			Log.e("KeepDoin", "auth json null");
+			sendResult(false, handler, context);
+		}
+
+		return false;
     }
 
 
@@ -267,8 +285,9 @@ public class GameModel {
      * @param handler The main UI thread's handler instance.
      * @param context The caller Activity's context.
      */
-    private static void sendResult(final Boolean result, final Handler handler,
-        final Context context) {
+    private static void sendResult(final Boolean result, final Handler handler, final Context context) {
+    	Log.i("ToDoGame", "sendResult()");
+    	
         if (handler == null || context == null) {
             return;
         }

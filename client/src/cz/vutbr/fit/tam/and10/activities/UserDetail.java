@@ -1,5 +1,10 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.activities;
 
+import cz.vutbr.fit.tam.and10.BadgesAdapter;
+import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.User;
+import cz.vutbr.fit.tam.and10.R.id;
+import cz.vutbr.fit.tam.and10.R.layout;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;

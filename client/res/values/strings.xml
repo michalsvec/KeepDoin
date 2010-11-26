@@ -8,8 +8,14 @@
     <string name="login_activity_password_label">Password</string>
     <string name="login_activity_sign_up_button">Sign up</string>
     <string name="login_activity_sign_in_button">Sign in</string>
-    <string name="login_activity_loginfail">Login failed</string>
+    <string name="login_activity_loginfail">Login failed. Register first.</string>
+    <string name="login_activity_regfail">Registration failed.</string>
     <string name="ui_activity_authenticating">Authenticating</string>
+    <string name="ui_activity_registering">Registering</string>
+	<string name="unknown_error">Unknown error</string>
 
+	<!-- in case of missing google account in phone -->
+	<string name="missing_account_button">Close</string>
+	<string name="missing_account_text">Please fill your google account info in your phone.</string>
 
 </resources>

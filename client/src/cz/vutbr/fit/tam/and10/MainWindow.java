@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
+import cz.vutbr.fit.tam.and10.activities.AllTab;
+import cz.vutbr.fit.tam.and10.activities.FriendsTab;
+import cz.vutbr.fit.tam.and10.activities.MeTab;
+import cz.vutbr.fit.tam.and10.activities.NowTab;
 
 
 public class MainWindow extends TabActivity {

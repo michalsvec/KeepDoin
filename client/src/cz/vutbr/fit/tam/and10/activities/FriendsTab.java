@@ -1,4 +1,4 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.activities;
 
 import java.io.IOException;
 
@@ -6,6 +6,13 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cz.vutbr.fit.tam.and10.FriendListAdapter;
+import cz.vutbr.fit.tam.and10.GameModel;
+import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.User;
+import cz.vutbr.fit.tam.and10.R.id;
+import cz.vutbr.fit.tam.and10.R.layout;
 
 import android.app.Activity;
 import android.content.Intent;
