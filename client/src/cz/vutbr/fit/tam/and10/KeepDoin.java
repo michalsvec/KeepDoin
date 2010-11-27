@@ -19,7 +19,8 @@ public class KeepDoin extends Activity {
 	
 	public static final String PREFS_NAME = "KeepDoinPrefs";
 
-	private String accountName;
+	public String accountName;
+	public int accountId;
 	
     private TextView mMessage;
 

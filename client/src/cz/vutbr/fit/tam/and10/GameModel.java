@@ -262,20 +262,27 @@ public class GameModel {
 		Log.i("ToDoGame", "authenticate json loaded");
 		Log.i("KeepDoin", json.toString());
 		
+		boolean status = false;
+		int id = 0;
+		
 		// return from thread
 		if(json != null) {
 			Log.i("KeepDoin", "auth json okay");
 			
-			boolean status = false;
+			
 			try {
 				status = json.getBoolean("status");
+				id = json.getInt("id");
 			} catch (JSONException e1) {
 				Log.e("KeepDoin", " JSONException status reading");
 				e1.printStackTrace();
 			}
 			
-			if(status)
+			if(status) {
+				// now the ID is available from the application
+				((KeepDoin) context).accountId = id;
 				sendResult(true, handler, context);
+			}
 			else
 				sendResult(false, handler, context);
 		}

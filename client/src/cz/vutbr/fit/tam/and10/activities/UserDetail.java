@@ -5,17 +5,25 @@ import android.os.Bundle;
 import android.widget.GridView;
 import android.widget.TextView;
 import cz.vutbr.fit.tam.and10.BadgesAdapter;
+import cz.vutbr.fit.tam.and10.KeepDoin;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.User;
 
 public class UserDetail extends Activity {
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // launch intent - we get user ID from extra
         Bundle extras = getIntent().getExtras();
-        int userId = extras.getInt("userId");
+        int userId = 0;
+        userId = extras.getInt("userId");
         
+        if(userId == 0) {
+        	KeepDoin appState = ((KeepDoin)getApplicationContext());
+        	userId = appState.accountId;
+        }
+
         // nastaveni layoutu pro friendy
         setContentView(R.layout.user_detail);
 
