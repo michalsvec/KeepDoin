@@ -3,22 +3,26 @@
       package="cz.vutbr.fit.tam.and10"
       android:versionCode="1"
       android:versionName="0.1">
-    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
+    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher" android:name=".KDGlobal">
         <activity android:label="@string/app_name" android:name="KeepDoin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NowTab" android:icon="@drawable/ic_tab_artists" android:label="Now"></activity>
-        <activity android:name=".AllTab" android:icon="@drawable/ic_tab_artists" android:label="All"></activity>
-        <activity android:name=".FriendsTab" android:icon="@drawable/ic_tab_artists" android:label="Friends"></activity>
-        <activity android:name=".MeTab" android:icon="@drawable/ic_tab_artists" android:label="Me"></activity>
-        <activity android:name=".UserDetail" android:label="User detail"></activity>
+        <activity android:name=".MainWindow"></activity>
+        <activity android:label="Now" android:name=".activities.NowTab" android:icon="@drawable/ico_tab_now"></activity>
+        <activity android:label="All" android:name=".activities.AllTab" android:icon="@drawable/ico_tab_all"></activity>
+        <activity android:label="Friends" android:name=".activities.FriendsTab" android:icon="@drawable/ico_tab_friends"></activity>
+        <activity android:label="Me" android:name=".activities.MeTab" android:icon="@drawable/ico_tab_me"></activity>
+        <activity android:label="User detail" android:name=".activities.UserDetail"></activity>
+        
     </application>
     
     <!-- internet connection security permission -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <!--  get account for login and registration - we are using google account in phone  -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-<uses-sdk android:minSdkVersion="3"></uses-sdk>
+	<uses-sdk android:minSdkVersion="3"></uses-sdk>
 </manifest> 

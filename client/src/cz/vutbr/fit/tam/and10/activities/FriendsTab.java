@@ -1,4 +1,4 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.activities;
 
 import java.io.IOException;
 
@@ -14,6 +14,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import cz.vutbr.fit.tam.and10.FriendListAdapter;
+import cz.vutbr.fit.tam.and10.GameModel;
+import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.User;
 
 public class FriendsTab extends Activity {
 	
