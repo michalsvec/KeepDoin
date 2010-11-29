@@ -1,69 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- table with priority color -->
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent"
-	android:layout_height="wrap_content"
-	android:background="#55771B"
-	android:stretchColumns="0"
-	>
-    <TableRow>
-        <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:layout_marginLeft="5dp"
-	    android:background="#000"
-	    android:stretchColumns="1"
-	    android:layout_column="0"
-	    >
-	    <TableRow>
-
-			<!-- title -->
-			<TextView
-			    android:layout_column="1"
-			    android:id="@+id/task_title"
-				android:textSize="15sp"
-				android:background="#000"
-				android:textColor="#FFF"
-				android:paddingLeft="5dp"
-			/>
-			<!-- likes count -->
-			<ImageView 
-				android:src="@drawable/ico_like_white_small"
-				android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_gravity="center"
-            />
-			<TextView
-		        android:id="@+id/task_likes_count"
-		        android:textSize="18sp"
-		        android:textColor="#EEE"
-		        android:paddingRight="10dp"
-		    />
-		    <!-- reward -->
-		    <TextView
-		        android:id="@+id/task_reward"
-		        android:textSize="18sp"
-		        android:textStyle="bold"
-		        android:textColor="#55771B"
-		        android:paddingLeft="5dp"
-		        android:paddingRight="5dp"
-		    />
-		    <!-- like -->
-		    <ImageView 
-                android:src="@drawable/ico_like_white_small"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:layout_gravity="center"
-            />
-            <CheckBox
-                android:id="@+id/task_like"
-            />
-		    <!-- complete -->
-		    <CheckBox
-		        android:id="@+id/task_complete"
-		    />
-		        
-       </TableRow>
-	   </TableLayout>
-    </TableRow>
-</TableLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/task_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#000"
+>
+<LinearLayout
+    android:id="@+id/task_priority"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp"
+    android:orientation="vertical"
+>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:background="#000"
+        android:orientation="horizontal"
+    >
+        <TextView
+		    android:id="@+id/task_name"
+		    android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+		    android:textSize="15sp"
+		    android:textColor="#FFF"
+		    android:padding="5dp"
+		    android:gravity="center_vertical"
+		/>
+		<CheckBox
+            android:id="@+id/task_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/task_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:background="#000"
+        android:orientation="horizontal"
+    >
+        <TextView
+            android:id="@+id/task_deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:textSize="10sp"
+            android:textColor="#CCC"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:gravity="center_vertical"
+            android:text="Nov 11 2010"
+        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="5dp"
+            android:textSize="10sp"
+            android:textColor="#FFF"
+            android:padding="5dp"
+            android:gravity="center_vertical"
+            android:text="REWARD:"
+        />
+        <TextView
+            android:id="@+id/task_reward"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginRight="5dp"
+            android:textSize="10sp"
+            android:textColor="#FFF"
+            android:textStyle="bold"
+            android:background="@drawable/bg_reward"
+            android:padding="5dp"
+            android:gravity="center_vertical"
+        />
+    </LinearLayout>
+</LinearLayout>
+</LinearLayout>
