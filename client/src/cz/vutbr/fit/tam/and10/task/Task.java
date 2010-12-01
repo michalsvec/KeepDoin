@@ -3,12 +3,12 @@ package cz.vutbr.fit.tam.and10.task;
 import java.security.InvalidParameterException;
 import java.util.Random;
 
+import android.app.Activity;
+import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.R;
 
 public class Task {
 
-	public static final int CONTEXT_MENU_ID = 0;
-	
 	public enum Priority {
 		LOW(1), MEDIUM(2), HIGH(3);
 	
@@ -35,14 +35,18 @@ public class Task {
 	protected String name;
 	protected Priority priority;
 	protected int category;
+	protected int position;
 	
 	protected int year;
 	protected int month;
 	protected int day;
 	
 	protected int currentReward;
+
+	protected Activity activity;
 	
-	public Task(String name, Priority priority) {
+	public Task(Activity activity, String name, Priority priority) {
+		this.activity = activity;
 		this.name = name;
 		this.priority = priority;
 	}
@@ -92,4 +96,31 @@ public class Task {
 		this.day = day;
 	}
 	
+	public void setPosition(int position) {
+		this.position = position;
+	}
+	
+	public int getPosition() {
+		return this.position;
+	}
+	
+	public void changeText() {
+		Toast.makeText(activity, "change text of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void changePriority() {
+		Toast.makeText(activity, "change priority of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void changeCategory() {
+		Toast.makeText(activity, "change category of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void remove() {
+		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
+	}
+
+	public void changeDeadline() {
+		Toast.makeText(activity, "change deadline of " + getName(), Toast.LENGTH_SHORT).show();
+	}
 }
