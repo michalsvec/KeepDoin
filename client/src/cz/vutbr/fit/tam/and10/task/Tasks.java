@@ -1,27 +1,31 @@
 package cz.vutbr.fit.tam.and10.task;
 
 import android.app.Activity;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import cz.vutbr.fit.tam.and10.R;
 
 public class Tasks {
 
 	protected TasksAdapter adapter;
-	private View view;
-
+	protected View view;
 	protected Activity activity;
 
 	public Tasks(Activity a) {
 		activity = a;
 		adapter = new TasksAdapter(a);
-
-		// TODO mockup
-		adapter.add(new Task(a, "Zalít kytičky", Task.Priority.HIGH));
-		adapter.add(new Task(a, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
-		adapter.add(new Task(a, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
+		a.registerForContextMenu(getListView());
+	}
+	
+	public void add(Task t) {
+		adapter.add(t);
 	}
 	
 	public View getView() {
@@ -29,12 +33,8 @@ public class Tasks {
 			LayoutInflater inflater = LayoutInflater.from(activity);
 			view = (View) inflater.inflate(R.layout.tasks, null);
 
-			ListView list = (ListView) view.findViewById(R.id.tasks);
+			ListView list = (ListView)view.findViewById(R.id.tasks);
 			list.setAdapter(adapter);
-
-			// TODO mockup
-			TextView t = (TextView) view.findViewById(R.id.category_name);
-			t.setText("Category");
 		}
 		return view;
 	}
@@ -43,29 +43,39 @@ public class Tasks {
 		return adapter.getItem(position);
 	}
 	
-//	public Task getItem(ContextMenuInfo menuInfo) {
-//		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
-//		
-//		// search for the closest task_layout
-//		View v = (View)info.targetView;
-//		while (v.findViewById(R.id.task_layout) == null) {
-//			ViewParent parent = v.getParent();
-//			if (parent instanceof View) {
-//				v = (View)parent;
-//			} else {
-//				v = null;
-//				break;
-//			}
-//		}
-//		
-//		// return task object saved in tag
-//		if (v != null) {
-//			return (Task)v.getTag();
-//		}
-//		return null;
-//	}
-
 	public ListView getListView() {
 		return (ListView)getView().findViewById(R.id.tasks);
+	}
+	
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    	MenuInflater inflater = activity.getMenuInflater();
+        inflater.inflate(R.menu.task_context_menu, menu);
+		
+		TextView name = (TextView)v.findViewById(R.id.task_name);
+		menu.setHeaderTitle(name.getText().toString());
+	}
+	
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+		Task task = getItem(info.position);
+    	
+    	switch (item.getItemId()) {
+		case R.id.context_menu_change_text:
+			task.changeText();
+			return true;
+		case R.id.context_menu_change_priority:
+			task.changePriority();
+			return true;
+		case R.id.context_menu_change_deadline:
+			task.changeDeadline();
+			return true;
+		case R.id.context_menu_change_category:
+			task.changeCategory();
+			return true;
+		case R.id.context_menu_remove:
+			task.remove();
+			return true;
+		}
+		return false;
 	}
 }

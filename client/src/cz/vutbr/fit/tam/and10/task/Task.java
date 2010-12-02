@@ -51,6 +51,42 @@ public class Task {
 		this.priority = priority;
 	}
 
+	
+	
+	/* ACTIONS ********************************************************************************/
+	
+	public void changeText() {
+		Toast.makeText(activity, "change text of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void changePriority() {
+		Toast.makeText(activity, "change priority of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void changeCategory() {
+		Toast.makeText(activity, "change category of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void remove() {
+		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
+	}
+
+	public void changeDeadline() {
+		Toast.makeText(activity, "change deadline of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+
+	public void complete() {
+		Toast.makeText(activity, "complete " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void uncomplete() {
+		Toast.makeText(activity, "uncomplete " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	
+	
+	/* GETTERS & SETTERS **********************************************************************/
+	
 	public int getCurrentReward() {
 		// TODO mockup
 		return 10 * (new Random().nextInt(1000));
@@ -102,25 +138,5 @@ public class Task {
 	
 	public int getPosition() {
 		return this.position;
-	}
-	
-	public void changeText() {
-		Toast.makeText(activity, "change text of " + getName(), Toast.LENGTH_SHORT).show();
-	}
-	
-	public void changePriority() {
-		Toast.makeText(activity, "change priority of " + getName(), Toast.LENGTH_SHORT).show();
-	}
-	
-	public void changeCategory() {
-		Toast.makeText(activity, "change category of " + getName(), Toast.LENGTH_SHORT).show();
-	}
-	
-	public void remove() {
-		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
-	}
-
-	public void changeDeadline() {
-		Toast.makeText(activity, "change deadline of " + getName(), Toast.LENGTH_SHORT).show();
 	}
 }

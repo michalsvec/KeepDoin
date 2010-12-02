@@ -86,8 +86,8 @@ public class KeepDoin extends Activity {
         else {
         	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             // TODO: pro testovaci ucely vzdy vyskoci uvodni obrazovka - pak smazat
-        	//boolean logged = settings.getBoolean("userLogged", false);
-        	boolean logged = false;
+        	boolean logged = settings.getBoolean("userLogged", false);
+//        	boolean logged = false;
         	
             // uzivatel uz je prihlasen, normalne startujeme aplikaci
             if(logged) {

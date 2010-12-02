@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import cz.vutbr.fit.tam.and10.R;
@@ -51,6 +53,18 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 			
 	//		TextView likesCount = (TextView)v.findViewById(R.id.task_likes_count);
 	//		likesCount.setText("10");
+			
+			CheckBox complete = (CheckBox) v.findViewById(R.id.task_complete);
+			complete.setOnClickListener(new OnClickListener() {
+				public void onClick(View v) {
+					CheckBox checkbox = (CheckBox)v;
+					if (checkbox.isChecked()) {
+						t.complete();
+					} else {
+						t.uncomplete();
+					}
+				}
+			});
 			
 			v.setOnCreateContextMenuListener(this);
 			v.setTag(t);
