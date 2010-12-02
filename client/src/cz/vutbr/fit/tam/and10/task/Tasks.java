@@ -1,5 +1,7 @@
 package cz.vutbr.fit.tam.and10.task;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -7,25 +9,70 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.commonsware.cwac.merge.MergeAdapter;
+
 import cz.vutbr.fit.tam.and10.R;
 
 public class Tasks {
 
-	protected TasksAdapter adapter;
+	protected MergeAdapter adapter;
 	protected View view;
 	protected Activity activity;
 
 	public Tasks(Activity a) {
 		activity = a;
-		adapter = new TasksAdapter(a);
+		adapter = new MergeAdapter();
+		
+		// TODO MOCKUP
+		addCategory(new Category(a, "Práce"));
+		TasksAdapter t = new TasksAdapter(activity);
+		t.add(new Task(activity, "Zalít v práci kytičky", Task.Priority.HIGH));
+		t.add(new Task(activity, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
+		t.add(new Task(activity, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
+		adapter.addAdapter(t);
+		
+		addCategory(new Category(a, "Škola"));
+		t = new TasksAdapter(activity);
+		t.add(new Task(activity, "Zalít ve škole kytičky", Task.Priority.HIGH));
+		t.add(new Task(activity, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
+		t.add(new Task(activity, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
+		adapter.addAdapter(t);
+		
+		addCategory(new Category(a, "Doma"));
+		t = new TasksAdapter(activity);
+		t.add(new Task(activity, "Zalít doma kytičky", Task.Priority.HIGH));
+		t.add(new Task(activity, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
+		t.add(new Task(activity, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
+		adapter.addAdapter(t);
+		
 		a.registerForContextMenu(getListView());
 	}
 	
-	public void add(Task t) {
-		adapter.add(t);
+	public void addTasks(List<Task> tasks) {
+		adapter.addAdapter(new TasksAdapter(activity, tasks));
+	}
+	
+	public void addCategory(final Category c) {
+		LayoutInflater inflater = LayoutInflater.from(activity);
+		View v = inflater.inflate(R.layout.category, null);
+		
+		ImageButton addTask = (ImageButton)v.findViewById(R.id.add_task);
+		addTask.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				c.createTask();
+			}
+		});
+		
+		TextView n = (TextView)v.findViewById(R.id.category_name);
+		n.setText(c.getName());
+		
+		adapter.addView(v);
 	}
 	
 	public View getView() {
@@ -40,7 +87,11 @@ public class Tasks {
 	}
 	
 	public Task getItem(int position) {
-		return adapter.getItem(position);
+		Object item = adapter.getItem(position);
+		if (item instanceof Task) {
+			return (Task)item;
+		}
+		return null;
 	}
 	
 	public ListView getListView() {
@@ -50,9 +101,7 @@ public class Tasks {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     	MenuInflater inflater = activity.getMenuInflater();
         inflater.inflate(R.menu.task_context_menu, menu);
-		
-		TextView name = (TextView)v.findViewById(R.id.task_name);
-		menu.setHeaderTitle(name.getText().toString());
+		menu.setHeaderTitle(R.string.context_menu_title);
 	}
 	
 	public boolean onContextItemSelected(MenuItem item) {
@@ -78,4 +127,5 @@ public class Tasks {
 		}
 		return false;
 	}
+	
 }

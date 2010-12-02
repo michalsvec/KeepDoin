@@ -1,6 +1,7 @@
 package cz.vutbr.fit.tam.and10.task;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import android.app.Activity;
 import android.view.ContextMenu;
@@ -22,6 +23,11 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 	
 	public TasksAdapter(Activity activity) {
 		super(activity, R.layout.task);
+		this.activity = activity;
+	}
+	
+	public TasksAdapter(Activity activity, List<Task> tasks) {
+		super(activity, R.layout.task, tasks);
 		this.activity = activity;
 	}
 	

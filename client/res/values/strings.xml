@@ -15,6 +15,7 @@
     <string name="login_activity_regfail">Registration failed.</string>
 
     <!-- task context menu -->
+    <string name="context_menu_title">Task menu</string>
     <string name="context_menu_change_text">Change text</string>
     <string name="context_menu_change_priority">Change priority</string>
     <string name="context_menu_change_category">Change category</string>
