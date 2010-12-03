@@ -131,9 +131,9 @@ class ServerPresenter extends BasePresenter
     {
     	$this->data = array();
     	
-        // tasks
+        // email added - necessary for gravatars
         $this->data['users'] = dibi::query('
-            SELECT id, real_name, rank_id
+            SELECT id, real_name, rank_id, email
             FROM [users]
         ')->fetchAll();
         
@@ -155,7 +155,9 @@ class ServerPresenter extends BasePresenter
 
 		if(empty($user)) {
 			dibi::query('INSERT INTO [users]', array('email' => $email));
+			
 			$this->data['status'] = 'true';
+			$this->data['id'] = dibi::insertId();
 		}
 		else {
 			$this->data['status'] = 'false';
@@ -172,8 +174,11 @@ class ServerPresenter extends BasePresenter
             WHERE [email]=%s
         ', $id)->fetch();
         
-        if(!empty($user))
+        if(!empty($user)) {
 			$this->data['status'] = 'true';
+			$this->data['id'] = $user['id'];
+
+		}
 		else
 			$this->data['status'] = 'false';
     }

@@ -1,10 +1,11 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.helpers;
 
 import java.io.IOException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 
 public class User {
 

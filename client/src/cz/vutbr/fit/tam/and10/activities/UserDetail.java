@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.GridView;
 import android.widget.TextView;
-import cz.vutbr.fit.tam.and10.BadgesAdapter;
 import cz.vutbr.fit.tam.and10.KeepDoin;
 import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.User;
+import cz.vutbr.fit.tam.and10.helpers.User;
+import cz.vutbr.fit.tam.and10.ui.BadgesAdapter;
 
-public class UserDetail extends Activity {
+public class UserDetail extends BaseActivity {
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +19,7 @@ public class UserDetail extends Activity {
         int userId = 0;
         userId = extras.getInt("userId");
         
+        // TODO: zjistit, jestli tohle opravdu funguje, protoze to neni dane v manifestu jako android:name atribut u tagu application
         if(userId == 0) {
         	KeepDoin appState = ((KeepDoin)getApplicationContext());
         	userId = appState.accountId;

@@ -14,12 +14,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
-import cz.vutbr.fit.tam.and10.FriendListAdapter;
-import cz.vutbr.fit.tam.and10.GameModel;
 import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.User;
+import cz.vutbr.fit.tam.and10.helpers.GameModel;
+import cz.vutbr.fit.tam.and10.helpers.User;
+import cz.vutbr.fit.tam.and10.ui.FriendListAdapter;
 
-public class FriendsTab extends Activity {
+public class FriendsTab extends BaseActivity {
 	
 	private User friends[] = null;
 	
@@ -61,6 +61,7 @@ public class FriendsTab extends Activity {
 				user = friendsArray.getJSONObject(i);
 				User friend = new User(user.getInt("id"));
 				friend.setName(user.getString("real_name"));
+				friend.setEmail(user.getString("email"));
 				
 				friends[i] = friend;
 				

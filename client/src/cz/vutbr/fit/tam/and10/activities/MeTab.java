@@ -1,14 +1,13 @@
 package cz.vutbr.fit.tam.and10.activities;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.widget.GridView;
 import android.widget.TextView;
-import cz.vutbr.fit.tam.and10.BadgesAdapter;
 import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.User;
+import cz.vutbr.fit.tam.and10.helpers.User;
+import cz.vutbr.fit.tam.and10.ui.BadgesAdapter;
 
-public class MeTab extends Activity {
+public class MeTab extends BaseActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

@@ -1,4 +1,4 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.helpers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,6 +18,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cz.vutbr.fit.tam.and10.KeepDoin;
 
 import android.content.Context;
 import android.os.Handler;

@@ -1,11 +1,13 @@
 package cz.vutbr.fit.tam.and10;
 
 
+import cz.vutbr.fit.tam.and10.helpers.GameModel;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +16,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class KeepDoin extends Activity {
 	
@@ -86,8 +89,8 @@ public class KeepDoin extends Activity {
         else {
         	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             // TODO: pro testovaci ucely vzdy vyskoci uvodni obrazovka - pak smazat
-        	//boolean logged = settings.getBoolean("userLogged", false);
-        	boolean logged = false;
+        	boolean logged = settings.getBoolean("userLogged", false);
+        	//boolean logged = false;
         	
             // uzivatel uz je prihlasen, normalne startujeme aplikaci
             if(logged) {
@@ -120,6 +123,15 @@ public class KeepDoin extends Activity {
     public void handleLogin(View view) {
         Log.i("KeepDoin", "handleLogin()");
         
+        // gets global class
+        KDGlobal global = (KDGlobal) getApplication();
+        if(!global.isNetworkAvailable()) {
+        	Context context = getApplicationContext();
+        	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
+        	toast.show();
+        	return;
+        }
+        
         this.dialogMsg = getText(R.string.ui_activity_authenticating);
         authType = authTypes.AUTH_LOGIN;
         
@@ -140,6 +152,16 @@ public class KeepDoin extends Activity {
      */
     public void handleRegistration(View view) {
         Log.i("KeepDoin", "handleRegistration()");
+        
+        // gets global class
+        KDGlobal global = (KDGlobal) getApplication();
+        if(!global.isNetworkAvailable()) {
+        	Context context = getApplicationContext();
+        	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
+        	toast.show();
+        	return;
+        }
+
         
         this.dialogMsg = getText(R.string.ui_activity_registering);
         authType = authTypes.AUTH_REG;

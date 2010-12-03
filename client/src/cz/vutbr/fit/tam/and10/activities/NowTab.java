@@ -8,7 +8,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.TextView;
 import cz.vutbr.fit.tam.and10.task.Tasks;
 
-public class NowTab extends Activity {
+public class NowTab extends BaseActivity {
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
