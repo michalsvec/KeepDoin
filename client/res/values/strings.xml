@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- ui generally -->
     <string name="hello">Hello World, KeepDoin!</string>
     <string name="app_name">Keep Doin\'</string>
-    
     <string name="no_internet_connection">No available internet connection.</string>
+    <string name="ui_activity_authenticating">Authenticating</string>
+    <string name="ui_activity_registering">Registering</string>
+    <string name="unknown_error">Unknown error</string>
 
+    <!-- login -->
     <string name="login_message">Application is using Google account from your phone.</string>
     <string name="login_activity_sign_up_button">Registration</string>
     <string name="login_activity_sign_in_button">Login</string>
     <string name="login_activity_loginfail">Login failed. Register first.</string>
     <string name="login_activity_regfail">Registration failed.</string>
-    <string name="ui_activity_authenticating">Authenticating</string>
-    <string name="ui_activity_registering">Registering</string>
-	<string name="unknown_error">Unknown error</string>
+
+    <!-- task context menu -->
+    <string name="context_menu_title">Task menu</string>
+    <string name="context_menu_change_text">Change text</string>
+    <string name="context_menu_change_priority">Change priority</string>
+    <string name="context_menu_change_category">Change category</string>
+    <string name="context_menu_change_deadline">Change deadline</string>
+    <string name="context_menu_remove">Remove</string>
 
 	<!-- in case of missing google account in phone -->
 	<string name="missing_account_button">Close</string>
-	<string name="missing_account_text">Please fill your google account info in your phone.</string>
-
+	<string name="missing_account_text">Please fill your Google account info in your phone.</string>
 </resources>
