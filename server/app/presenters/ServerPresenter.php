@@ -126,7 +126,9 @@ class ServerPresenter extends BasePresenter
         
         // TODO post-db hook to compute rewards every time
     }
-    
+
+
+
     public function renderGetUsers()
     {
     	$this->data = array();
@@ -137,6 +139,28 @@ class ServerPresenter extends BasePresenter
             FROM [users]
         ')->fetchAll();
         
+    }
+
+
+
+    public function renderGetFriends($id)
+    {
+    	$this->data = array();
+    	
+    	
+    	$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
+    	
+    	$friends = array();
+    	foreach($friendships as $friendship) {
+    		$friends[] = $friendship->user1_id;
+    		$friends[] = $friendship->user2_id;
+    	}
+    	
+
+        $this->data['friends'] = dibi::fetchAll('
+            SELECT id, real_name, rank_id, email
+            FROM [users] WHERE id IN ('.join(", ", $friends).') AND id != %i
+        ', $id);
     }
 
 
