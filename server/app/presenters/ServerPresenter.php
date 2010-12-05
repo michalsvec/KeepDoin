@@ -11,6 +11,11 @@
 
 /**
  * Server presenter.
+ * 
+ * http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
+ * http://www.gen-x-design.com/archives/making-restful-requests-in-php/
+ * http://www.recessframework.org/page/towards-restful-php-5-basic-tips
+ * http://stackoverflow.com/questions/359047/php-detecting-request-type-get-post-put-or-delete
  *
  * @author Jan Javorek <honza@javorek.net>
  */
@@ -52,8 +57,8 @@ class ServerPresenter extends BasePresenter
 	{
 		return json_decode(file_get_contents('php://input'));
 	}
-    
-    
+
+	
     
     /* *********************** API METHODS *********************** */
     
@@ -136,7 +141,6 @@ class ServerPresenter extends BasePresenter
             SELECT id, real_name, rank_id
             FROM [users]
         ')->fetchAll();
-        
     }
 
 
@@ -188,7 +192,4 @@ class ServerPresenter extends BasePresenter
     	// TODO check duplicities
     }
     
-    // TODO PUT/DELETE handling
-    // TODO read http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
-
 }

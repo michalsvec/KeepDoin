@@ -1,20 +1,28 @@
 package cz.vutbr.fit.tam.and10.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import cz.vutbr.fit.tam.and10.task.Tasks;
 
 public class AllTab extends Activity {
+	
+	private Tasks tasks;
+	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO debug
-        startActivity(new Intent(this, ManageCategories.class));
-        
-        // TODO mockup
-        TextView textview = new TextView(this);
-        textview.setText("Seznam vsech ukolu");
-        setContentView(textview);
+        tasks = new Tasks(this);
+        setContentView(tasks.getView());
+    }
+    
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+    	tasks.onCreateContextMenu(menu, v, menuInfo);
+	}
+    
+    public boolean onContextItemSelected(MenuItem item) {
+		return tasks.onContextItemSelected(item);
     }
 }
