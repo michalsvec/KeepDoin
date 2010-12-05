@@ -1,9 +1,10 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.helpers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -16,21 +17,24 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+import cz.vutbr.fit.tam.and10.KeepDoin;
 
 public class GameModel {
 
 	private static String serverURL = "http://todogame.michalsvec.cz/api/";
 	
 
-	private enum RESTMethods { GET, POST, DELETE, UPDATE} 
-	
-	
+	private enum RESTMethods { GET, POST, DELETE, UPDATE } 
+
+
+
 	/**
 	 * Returns informations about user
 	 * 
@@ -45,16 +49,27 @@ public class GameModel {
 		json = processHttpRequest(requestURL, RESTMethods.GET, null);
 		return json;
 	}
-	
-	
-	
-	public JSONObject getFriendsList() throws ClientProtocolException, IOException, JSONException {
+
+
+
+	public JSONObject getFriendsList(int accountId) throws ClientProtocolException, IOException, JSONException {
 		JSONObject json = new JSONObject();
-		String requestURL = serverURL + "users/";
+		String requestURL = serverURL + "friends/"+accountId;
 		json = processHttpRequest(requestURL, RESTMethods.GET, null);
 		return json;
-		
 	} 
+
+
+
+	public void postFriendRequest(int user_id, String email) throws ClientProtocolException, IOException, JSONException {
+		String requestURL = serverURL + "friendship/" + user_id;
+		
+		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("email", email)); 
+		
+		processHttpRequest(requestURL, RESTMethods.POST, params);
+		return;
+	}
 
 
 
@@ -116,7 +131,7 @@ public class GameModel {
                 Log.i("KeepDoin","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
 
                 // Closing the input stream will trigger connection release
-                instream.close();
+                instream.close();  
 
                 return json;
 				
@@ -281,6 +296,7 @@ public class GameModel {
 			if(status) {
 				// now the ID is available from the application
 				((KeepDoin) context).accountId = id;
+				Log.i("KeepDoin", " accountId set");
 				sendResult(true, handler, context);
 			}
 			else

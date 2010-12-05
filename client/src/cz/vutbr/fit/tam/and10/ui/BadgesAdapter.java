@@ -1,24 +1,29 @@
-package cz.vutbr.fit.tam.and10;
+package cz.vutbr.fit.tam.and10.ui;
 
+import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.R.drawable;
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-public class FriendListAdapter extends BaseAdapter {
+public class BadgesAdapter extends BaseAdapter {
 	private Context mContext;
-	User friends[] = null;
-	
-    public FriendListAdapter(Context c, User friends[]) {
+	private int count; 
+
+    public BadgesAdapter(Context c, int count) {
         mContext = c;
-        this.friends = friends; 
+        this.count = count;
     }
 
     public int getCount() {
-   		return friends.length;
+    	// pokud zadam velky cislo, vratim maximum obrazku, nebo kdyz je nula, tak vypise vsechny obrazky
+    	if(count > mThumbIds.length || count == 0)
+    		return mThumbIds.length;
+    	else
+    		return this.count;
     }
 
     public Object getItem(int position) {
@@ -31,25 +36,19 @@ public class FriendListAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
+        ImageView imageView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes
-
-            LayoutInflater li = LayoutInflater.from(mContext);
-            view = li.inflate(R.layout.friendicon, null);
-
-            TextView tv = (TextView)view.findViewById(R.id.icon_text);
-            String[] nameTokens = this.friends[position].getName().split(" ");
-			tv.setText(nameTokens[0]);
-
-			ImageView iv = (ImageView)view.findViewById(R.id.icon_image);
-			iv.setImageResource(mThumbIds[position]);
+            imageView = new ImageView(mContext);
+            imageView.setLayoutParams(new GridView.LayoutParams(50, 50));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(8, 8, 8, 8);
         } else {
-        	view = (View) convertView;
+            imageView = (ImageView) convertView;
         }
 
-        return view;
+        imageView.setImageResource(mThumbIds[position]);
+        return imageView;
     }
-
 
     // references to our images
     private Integer[] mThumbIds = {

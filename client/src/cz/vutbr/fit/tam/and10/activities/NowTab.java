@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import cz.vutbr.fit.tam.and10.task.Tasks;
 
-public class NowTab extends Activity {
+public class NowTab extends BaseActivity {
 	
 	private Tasks tasks;
 	

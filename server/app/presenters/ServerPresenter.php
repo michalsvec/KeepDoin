@@ -131,16 +131,40 @@ class ServerPresenter extends BasePresenter
         
         // TODO post-db hook to compute rewards every time
     }
-    
+
+
+
     public function renderGetUsers()
     {
     	$this->data = array();
     	
-        // tasks
+        // email added - necessary for gravatars
         $this->data['users'] = dibi::query('
-            SELECT id, real_name, rank_id
+            SELECT id, real_name, rank_id, email
             FROM [users]
         ')->fetchAll();
+    }
+
+
+
+    public function renderGetFriends($id)
+    {
+    	$this->data = array();
+    	
+    	
+    	$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
+    	
+    	$friends = array();
+    	foreach($friendships as $friendship) {
+    		$friends[] = $friendship->user1_id;
+    		$friends[] = $friendship->user2_id;
+    	}
+    	
+
+        $this->data['friends'] = dibi::fetchAll('
+            SELECT id, real_name as name, rank_id, email
+            FROM [users] WHERE id IN ('.join(", ", $friends).') AND id != %i
+        ', $id);
     }
 
 
@@ -159,7 +183,9 @@ class ServerPresenter extends BasePresenter
 
 		if(empty($user)) {
 			dibi::query('INSERT INTO [users]', array('email' => $email));
+			
 			$this->data['status'] = 'true';
+			$this->data['id'] = dibi::insertId();
 		}
 		else {
 			$this->data['status'] = 'false';
@@ -176,20 +202,52 @@ class ServerPresenter extends BasePresenter
             WHERE [email]=%s
         ', $id)->fetch();
         
-        if(!empty($user))
+        if(!empty($user)) {
 			$this->data['status'] = 'true';
+			$this->data['id'] = $user['id'];
+
+		}
 		else
 			$this->data['status'] = 'false';
     }
 
 
 
-    public function renderPostFriendship()
+    public function renderPostFriendship($id)
     {
-    	dibi::query('INSERT INTO [friendships]', (array)$this->getInput());
-    	$this->data = TRUE;
+    	$input = $this->getInput();
+
+    	$email = $input->email;
+    	$id    = $input->id;
+
     	
-    	// TODO check duplicities
+		$mail = new Mail;
+		$mail->setFrom('KeepDoin <god@heaven.com>');
+		$mail->addTo($email);
+		$mail->setSubject('Požadavek na přátelství');
+		$mail->setBody("ahojkyyyyy. http://todogame.michalsvec.cz/api/friendship/$id?email=$email");
+		$mail->send();
+
+    	$this->data = TRUE;
     }
+
+
+
+    public function renderGetFriendship($id)
+    {
     
+<<<<<<< HEAD
+=======
+    	$id_2nd = dibi::fetchSingle("SELECT [id] FROM [users] WHERE [email] = %s", $_GET['email']);
+    	dibi::query('INSERT INTO [friendships] VALUES (%i, %i)', $id, $id_2nd);
+
+		$this->data = TRUE;
+    }
+
+
+
+    // TODO PUT/DELETE handling
+    // TODO read http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
+
+>>>>>>> 71ff7371b8e36592055daae45fb7697b5e37b96d
 }
