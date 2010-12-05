@@ -3,6 +3,7 @@ package cz.vutbr.fit.tam.and10.ui;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
@@ -19,9 +20,9 @@ import cz.vutbr.fit.tam.and10.helpers.User;
 
 public class FriendListAdapter extends BaseAdapter {
 	private Context mContext;
-	User friends[] = null;
+	ArrayList<User> friends = null;
 	
-    public FriendListAdapter(Context c, User friends[]) {
+    public FriendListAdapter(Context c, ArrayList<User> friends) {
         mContext = c;
         this.friends = friends; 
     }
@@ -51,7 +52,7 @@ public class FriendListAdapter extends BaseAdapter {
 
             // get first name
             TextView tv = (TextView)view.findViewById(R.id.icon_text);
-            String[] nameTokens = this.friends[position].getName().split(" ");
+            String[] nameTokens = this.friends.get(position).getName().split(" ");
 			tv.setText(nameTokens[0]);
 
 			// seznam souboru
@@ -62,7 +63,7 @@ public class FriendListAdapter extends BaseAdapter {
 
 			
 			// search local storage for avatar
-			String email = this.friends[position].getEmail();
+			String email = this.friends.get(position).getEmail();
 			FileInputStream fos = null;
 			ImageView iv = (ImageView)view.findViewById(R.id.icon_image);
 			try {

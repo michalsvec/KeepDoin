@@ -33,7 +33,6 @@ public class Synchronization {
 		try {
 			db.createDataBase();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -53,7 +52,10 @@ public class Synchronization {
         try {
         	KDGlobal global = (KDGlobal) mContext.getApplication();
 			friendsList = model.getFriendsList(global.accountId);
-		
+
+			// friends table truncate
+			this.db.truncateTable("friends");
+
 			if(friendsList != null) {
 				friendsArray = friendsList.getJSONArray("friends");
 	
@@ -91,7 +93,6 @@ public class Synchronization {
 		try {
 			url = new URL(file_url);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		File file = new File(target_file);
@@ -116,16 +117,14 @@ public class Synchronization {
 			fos.write(baf.toByteArray());
 			fos.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	} 
-	
 
-	
+
+
 	public void synchronize() {
 		
 		KDGlobal global = (KDGlobal) mContext.getApplication();

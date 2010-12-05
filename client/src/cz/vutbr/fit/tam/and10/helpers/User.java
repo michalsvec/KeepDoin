@@ -66,6 +66,8 @@ public class User {
 	public String getName() {
 		return real_name;
 	}
+
+	
 	public void setName(String name) {
 		this.real_name = name; 
 	}
@@ -82,7 +84,8 @@ public class User {
 	public String getRank() {
 		return Integer.toString(rankId);
 	}
-	public void setName(int rank) {
+	
+	public void setRank(int rank) {
 		this.rankId = rank; 
 	}
 }

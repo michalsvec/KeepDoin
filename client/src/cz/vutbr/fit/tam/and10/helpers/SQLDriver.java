@@ -4,11 +4,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -178,5 +180,35 @@ public class SQLDriver extends SQLiteOpenHelper {
 		}
 
 		return;
+	}
+	
+
+	public ArrayList<User> getFriends() {
+		Log.i("KeepDoin", "getFriends()");
+
+		ArrayList<User> friends = new ArrayList<User>();
+		Cursor cur = null;
+
+		cur = db.rawQuery("SELECT * FROM friends", new String [] {});
+
+		cur.moveToFirst();
+		while (cur.isAfterLast() == false) {
+			User user = new User(cur.getInt(cur.getColumnIndex("email")));
+			user.setName(cur.getString(cur.getColumnIndex("name")));
+			user.setEmail(cur.getString(cur.getColumnIndex("email")));
+
+			friends.add(user);
+
+			cur.moveToNext();
+		}
+		cur.close();
+		return friends;
+	} 
+
+
+	
+	public void truncateTable(String table) {
+		String query = "DELETE FROM "+table+";";
+		this.execSQL(query);
 	}
 }
