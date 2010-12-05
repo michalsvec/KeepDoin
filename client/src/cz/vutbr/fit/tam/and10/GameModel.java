@@ -109,11 +109,11 @@ public class GameModel {
 				// A Simple JSON Response Read
                 InputStream instream = entity.getContent();
                 String result= convertStreamToString(instream);
-                Log.i("ToDoGame", result);
+                Log.i("KeepDoin", result);
  
                 // A Simple JSONObject Creation
                 JSONObject json=new JSONObject(result);
-                Log.i("TodoGame","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
+                Log.i("KeepDoin","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
 
                 // Closing the input stream will trigger connection release
                 instream.close();
@@ -259,7 +259,7 @@ public class GameModel {
 			e.printStackTrace();
 		}
 
-		Log.i("ToDoGame", "authenticate json loaded");
+		Log.i("KeepDoin", "authenticate json loaded");
 		Log.i("KeepDoin", json.toString());
 		
 		boolean status = false;
@@ -305,7 +305,7 @@ public class GameModel {
      * @param context The caller Activity's context.
      */
     private static void sendResult(final Boolean result, final Handler handler, final Context context) {
-    	Log.i("ToDoGame", "sendResult()");
+    	Log.i("KeepDoin", "sendResult()");
     	
         if (handler == null || context == null) {
             return;

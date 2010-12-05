@@ -16,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.category.Category;
 
 public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextMenuListener {
 
@@ -27,6 +28,11 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 	}
 	
 	public TasksAdapter(Activity activity, List<Task> tasks) {
+		super(activity, R.layout.task, tasks);
+		this.activity = activity;
+	}
+	
+	public TasksAdapter(Activity activity, Task[] tasks) {
 		super(activity, R.layout.task, tasks);
 		this.activity = activity;
 	}

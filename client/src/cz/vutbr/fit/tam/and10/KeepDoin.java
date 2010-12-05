@@ -124,8 +124,8 @@ public class KeepDoin extends Activity {
         authType = authTypes.AUTH_LOGIN;
         
         showProgress();
-        Log.i("ToDoGame", "Starting thread!");
-            
+        Log.i("KeepDoin", "Starting thread!");
+
         // Start authenticating...
         mAuthThread = GameModel.attemptAuth(this.accountName, "login", mHandler, KeepDoin.this);
     }
@@ -145,7 +145,7 @@ public class KeepDoin extends Activity {
         authType = authTypes.AUTH_REG;
         
         showProgress();
-        Log.i("ToDoGame", "Starting thread!");
+        Log.i("KeepDoin", "Starting thread!");
             
         // Start authenticating...
         mAuthThread = GameModel.attemptAuth(this.accountName, "registration", mHandler, KeepDoin.this);

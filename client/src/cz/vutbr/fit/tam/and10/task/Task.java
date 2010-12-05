@@ -1,16 +1,9 @@
 package cz.vutbr.fit.tam.and10.task;
 
 import java.security.InvalidParameterException;
-import java.text.DecimalFormat;
 import java.util.Random;
 
 import android.app.Activity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.R;
 
