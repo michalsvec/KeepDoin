@@ -57,7 +57,6 @@ public class GameModel {
 		String requestURL = serverURL + "friends/"+accountId;
 		json = processHttpRequest(requestURL, RESTMethods.GET, null);
 		return json;
-		
 	} 
 
 

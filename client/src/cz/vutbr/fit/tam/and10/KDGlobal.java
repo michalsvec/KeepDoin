@@ -15,6 +15,9 @@ import android.net.NetworkInfo;
  */
 public class KDGlobal extends Application {
 
+	public String accountName;
+	public int accountId;
+
 	
 	// detection if the internet connection is active
 	public boolean isNetworkAvailable()

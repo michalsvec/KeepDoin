@@ -5,10 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * @link: 
@@ -21,14 +26,21 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 	private SQLiteDatabase db;
 	// The Android's default system path of your application database.
-	private static String DB_PATH = "/data/data/YOUR_PACKAGE/databases/";
-	private static String DB_NAME = "KeepDoinDB";
+	private String DB_PATH = null;
+	private static String DB_NAME = "keepdoindb";
 	private final Context myContext;
 
 	public SQLDriver(Context context) {
 		super(context, DB_NAME, null, 1);
+		Log.i("KeepDoin", "SQLDriver()");
 		this.myContext = context;
+
+		DB_PATH = "/data/data/"+context.getApplicationContext().getPackageName()+"/databases/";
+
+		this.openDataBase();
 	}
+
+
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -40,18 +52,31 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 	}
 
+
+
+    public void openDataBase() throws SQLException{
+    	Log.i("KeepDoin", "openDataBase()");
+    	//Open the database
+        String myPath = DB_PATH + DB_NAME;
+        Log.i("KeepDoin", "path: "+myPath);
+    	this.db = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
+    }
+
+
+
 	/**
 	 * Creates a empty database on the system and rewrites it with your own
 	 * database.
 	 * */
 	public void createDataBase() throws IOException {
-
+		Log.i("KeepDoin", "createDataBase()");
 		boolean dbExist = checkDataBase();
 
 		if (dbExist) {
 			// do nothing - database already exist
+			Log.i("KeepDoin", "database exists");
 		} else {
-
+			Log.i("KeepDoin", "creating database");
 			// By calling this method and empty database will be created into
 			// the default system path
 			// of your application so we are gonna be able to overwrite that
@@ -80,17 +105,12 @@ public class SQLDriver extends SQLiteOpenHelper {
 			String myPath = DB_PATH + DB_NAME;
 			checkDB = SQLiteDatabase.openDatabase(myPath, null,
 					SQLiteDatabase.OPEN_READONLY);
-
 		} catch (SQLiteException e) {
-
 			// database does't exist yet.
-
 		}
 
 		if (checkDB != null) {
-
 			checkDB.close();
-
 		}
 
 		return checkDB != null ? true : false;
@@ -109,6 +129,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 		// Path to the just created empty db
 		String outFileName = DB_PATH + DB_NAME;
 
+		Log.i("KeepDoin", "CopyDatabase()");
 		// Open the empty db as the output stream
 		OutputStream myOutput = new FileOutputStream(outFileName);
 
@@ -123,6 +144,39 @@ public class SQLDriver extends SQLiteOpenHelper {
 		myOutput.flush();
 		myOutput.close();
 		myInput.close();
+	}
 
+
+
+	/**
+	 * Runs custom sql query
+	 * 
+	 * @author misa
+	 * @param sql
+	 */
+	public void execSQL(String sql) {
+		Log.i("KeepDoin", "execSQL()");
+		Log.i("KeepDoin", "sql: "+sql);
+		db.execSQL(sql);
+	}
+
+
+
+	public void insertFriend(JSONObject user) {
+		Log.i("KeepDoin", "insertFriend()");
+		try {
+			int id = user.getInt("id");
+			String name = user.getString("name");
+			String email = user.getString("email");
+			String query = "INSERT INTO friends (id, name, email) VALUES ('"+id+"', '"+name+"', '"+email+"');";
+			this.execSQL(query);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}catch (SQLException e) {
+			Log.i("KeepDoin", "SQLException()");
+			e.printStackTrace();
+		}
+
+		return;
 	}
 }

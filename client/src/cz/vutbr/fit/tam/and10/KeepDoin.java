@@ -1,10 +1,8 @@
 package cz.vutbr.fit.tam.and10;
 
 
-import cz.vutbr.fit.tam.and10.helpers.GameModel;
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,14 +15,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import cz.vutbr.fit.tam.and10.activities.BaseActivity;
+import cz.vutbr.fit.tam.and10.helpers.GameModel;
 
-public class KeepDoin extends Activity {
+public class KeepDoin extends BaseActivity {
 	
 	public static final String PREFS_NAME = "KeepDoinPrefs";
 
-	public String accountName;
-	public int accountId;
-	
+
     private TextView mMessage;
 
     private enum authTypes {AUTH_LOGIN, AUTH_REG};
@@ -90,11 +88,13 @@ public class KeepDoin extends Activity {
         	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
             // TODO: pro testovaci ucely vzdy vyskoci uvodni obrazovka - pak smazat
         	boolean logged = settings.getBoolean("userLogged", false);
-        	//boolean logged = false;
+        	//	boolean logged = false;
         	
             // uzivatel uz je prihlasen, normalne startujeme aplikaci
             if(logged) {
             	Log.i("KeepDoin", "user logged - starting app");
+            	this.accountId = settings.getInt("accountId", 0);
+            	
             	finishAuth();
             }
             // neprihlasen (prvni prhlaseni, nebo smazani preferences) 
@@ -218,8 +218,10 @@ public class KeepDoin extends Activity {
         dismissDialog(0);
 
         if (authType == authTypes.AUTH_LOGIN) {
-        	if(result)
+        	if(result) {
+        		saveLogin();
         		finishAuth();
+        	}
         	else {
         		Log.e("KeepDoin", "onAuthenticationResult: AUTH_LOGIN fail");
                 mMessage = (TextView) findViewById(R.id.notices);
@@ -228,14 +230,8 @@ public class KeepDoin extends Activity {
         }
         else if (authType == authTypes.AUTH_REG) {
         	if(result) {
-	        	// saves local preferences
-	        	// permanent login 
-	        	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-	            SharedPreferences.Editor editor = settings.edit();
-	            editor.putBoolean("userLogged", true);
-	            editor.commit();	// need to commit changes before it ends
-	            
-	            finishAuth();
+        		saveLogin();
+        		finishAuth();
         	}
         	else {
         		Log.e("KeepDoin", "onAuthenticationResult: AUTH_REG fail");
@@ -250,6 +246,19 @@ public class KeepDoin extends Activity {
         }
     }
 
+    
+    
+    private void saveLogin() {
+    	// saves local preferences
+    	// permanent login 
+    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("userLogged", true);
+        editor.putInt("accountId", accountId);
+        editor.commit();	// need to commit changes before it ends
+        
+    }
+    
 
 
     /**
@@ -260,6 +269,12 @@ public class KeepDoin extends Activity {
      */
     protected void finishAuth() {
         Log.i("KeepDoin", "finishAuth()");
+
+        // stores account informations to global storage
+        KDGlobal global = (KDGlobal) getApplication();
+        global.accountId = this.accountId;
+        global.accountName = this.accountName;
+
 
         Intent intent = new Intent(KeepDoin.this, MainWindow.class);
 

@@ -10,7 +10,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,59 +17,66 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.util.Log;
+import cz.vutbr.fit.tam.and10.KDGlobal;
+import cz.vutbr.fit.tam.and10.activities.BaseActivity;
 
 public class Synchronization {
 
-	private Context mContext;
-	
-	
-	
-	
+	private BaseActivity mContext;
+	private SQLDriver db;
+
+
+
 	public Synchronization(Context c) {
-		mContext = c;
+		mContext = (BaseActivity) c;	// pretypovai kvuli atributum
+		db = new SQLDriver(c);
+		try {
+			db.createDataBase();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 
 
-	public void getFriendIcons() {
+	/**
+	 * Download friend list, save to local sql database and downloads avatars
+	 */
+	public void synchronizeFriends() {
 		
         // load friend list
         JSONObject friendsList = null;
-
-		
+        JSONArray friendsArray = null;
+        
         GameModel model = new GameModel();
         try {
-			friendsList = model.getFriendsList();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
-		JSONArray friendsArray = null;
+        	KDGlobal global = (KDGlobal) mContext.getApplication();
+			friendsList = model.getFriendsList(global.accountId);
 		
-		try {
-			friendsArray = friendsList.getJSONArray("users");
+			if(friendsList != null) {
+				friendsArray = friendsList.getJSONArray("friends");
+	
+				for (int i = 0; i < friendsArray.length(); i++) {
+					JSONObject user = null;
+					user = friendsArray.getJSONObject(i);
 
-			for (int i = 0; i < friendsArray.length(); i++) {
-				JSONObject user = null;
-				user = friendsArray.getJSONObject(i);
-				String email = user.getString("email");
-				
-				String gravatar_url = Gravatar.getGravatarURL(email);
-				String gravatar_hash = Gravatar.getGravatarHash(email);
-				
-				Log.i("KeepDoin", "saving gravatar for:"+email+" - hash:"+gravatar_hash);
-				
-				downloadURL(gravatar_url, gravatar_hash);
-				Log.i("KeepDoin", gravatar_url);
+					// downloads gravatar
+					String email = user.getString("email");
+					String gravatar_url = Gravatar.getGravatarURL(email);
+					String gravatar_hash = Gravatar.getGravatarHash(email);
+					Log.i("KeepDoin", "saving gravatar for:"+email+" - hash:"+gravatar_hash);
+					downloadURL(gravatar_url, gravatar_hash);
+					Log.i("KeepDoin", gravatar_url);
+
+					// saves credentials about user to sql database
+					Log.i("TodoGame","userObject: \n"+user.toString()+"\n");
+					db.insertFriend(user);
+				}
 			}
+			else 
+				return;
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -102,7 +108,6 @@ public class Synchronization {
 				baf.append((byte) current);
 			}
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 
@@ -119,8 +124,12 @@ public class Synchronization {
 		}
 	} 
 	
+
+	
 	public void synchronize() {
 		
-		getFriendIcons();
+		KDGlobal global = (KDGlobal) mContext.getApplication();
+        mContext.accountId =  global.accountId;
+		synchronizeFriends();
 	}
 }

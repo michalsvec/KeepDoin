@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.AdapterView.OnItemClickListener;
+import cz.vutbr.fit.tam.and10.KDGlobal;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.helpers.GameModel;
 import cz.vutbr.fit.tam.and10.helpers.User;
@@ -29,25 +30,22 @@ public class FriendsTab extends BaseActivity {
 
         // load friend list
         JSONObject friendsList = null;
+        JSONArray friendsArray = null;
+        
+        
         
         GameModel model = new GameModel();
         try {
-			friendsList = model.getFriendsList();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        	KDGlobal global = (KDGlobal) getApplication();
 
+        	try {
+				friendsList = model.getFriendsList(global.accountId);
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-		JSONArray friendsArray = null;
-		
-		try {
 			friendsArray = friendsList.getJSONArray("users");
 		} catch (JSONException e) {
 			e.printStackTrace();
