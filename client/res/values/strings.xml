@@ -15,12 +15,14 @@
     <string name="login_activity_loginfail">Login failed. Register first.</string>
     <string name="login_activity_regfail">Registration failed.</string>
 
-    <!-- task context menu -->
-    <string name="context_menu_title">Task menu</string>
+    <!-- task & category context menu -->
+    <string name="context_menu_title">Menu</string>
     <string name="context_menu_change_text">Change text</string>
     <string name="context_menu_change_priority">Change priority</string>
     <string name="context_menu_change_category">Change category</string>
     <string name="context_menu_change_deadline">Change deadline</string>
+    <string name="context_menu_change_move_up">Move up</string>
+    <string name="context_menu_change_move_down">Move down</string>
     <string name="context_menu_remove">Remove</string>
 
 	<!-- in case of missing google account in phone -->

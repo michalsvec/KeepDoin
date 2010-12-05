@@ -18,6 +18,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.commonsware.cwac.merge.MergeAdapter;
 
 import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.category.Category;
 
 public class Tasks {
 
@@ -60,7 +61,7 @@ public class Tasks {
 	
 	public void addCategory(final Category c) {
 		LayoutInflater inflater = LayoutInflater.from(activity);
-		View v = inflater.inflate(R.layout.category, null);
+		View v = inflater.inflate(R.layout.category_header, null);
 		
 		ImageButton addTask = (ImageButton)v.findViewById(R.id.add_task);
 		addTask.setOnClickListener(new OnClickListener() {

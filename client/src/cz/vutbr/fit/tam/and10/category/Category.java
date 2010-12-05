@@ -1,4 +1,4 @@
-package cz.vutbr.fit.tam.and10.task;
+package cz.vutbr.fit.tam.and10.category;
 
 import android.app.Activity;
 import android.widget.Toast;
@@ -23,12 +23,20 @@ public class Category {
 		Toast.makeText(activity, "add task in category " + getName(), Toast.LENGTH_SHORT).show();
 	}
 	
+	public void changeText() {
+		Toast.makeText(activity, "change text of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
 	public void moveUp() {
-		// TODO
+		Toast.makeText(activity, "move up " + getName(), Toast.LENGTH_SHORT).show();
 	}
 	
 	public void moveDown() {
-		// TODO
+		Toast.makeText(activity, "move down " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void remove() {
+		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
 	}
 	
 	public String getName() {

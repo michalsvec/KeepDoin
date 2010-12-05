@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+	   android:id="@+id/context_menu_change_text"
+	   android:title="@string/context_menu_change_text"
+	/>
+	<item
+       android:id="@+id/context_menu_move_up"
+       android:title="@string/context_menu_change_priority"
+    />
+    <item
+       android:id="@+id/context_menu_move_down"
+       android:title="@string/context_menu_change_deadline"
+    />
+    <item
+       android:id="@+id/context_menu_remove"
+       android:title="@string/context_menu_remove"
+    />
+</menu>
