@@ -4,5 +4,8 @@
     <item android:id="@+id/menu_sync"
           android:title="Synchronize" 
           android:icon="@drawable/ico_menu_synchronization"/>  
-                 
+
+    <item android:id="@+id/menu_add_friend"
+          android:title="Add friend" 
+          android:icon="@drawable/ico_menu_add_friend"/>
 </menu>

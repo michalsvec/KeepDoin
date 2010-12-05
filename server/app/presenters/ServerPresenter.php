@@ -158,7 +158,7 @@ class ServerPresenter extends BasePresenter
     	
 
         $this->data['friends'] = dibi::fetchAll('
-            SELECT id, real_name, rank_id, email
+            SELECT id, real_name as name, rank_id, email
             FROM [users] WHERE id IN ('.join(", ", $friends).') AND id != %i
         ', $id);
     }
@@ -209,14 +209,37 @@ class ServerPresenter extends BasePresenter
 
 
 
-    public function renderPostFriendship()
+    public function renderPostFriendship($id)
     {
-    	dibi::query('INSERT INTO [friendships]', (array)$this->getInput());
-    	$this->data = TRUE;
+    	$input = $this->getInput();
+
+    	$email = $input->email;
+    	$id    = $input->id;
+
     	
-    	// TODO check duplicities
+		$mail = new Mail;
+		$mail->setFrom('KeepDoin <god@heaven.com>');
+		$mail->addTo($email);
+		$mail->setSubject('Požadavek na přátelství');
+		$mail->setBody("ahojkyyyyy. http://todogame.michalsvec.cz/api/friendship/$id?email=$email");
+		$mail->send();
+
+    	$this->data = TRUE;
     }
+
+
+
+    public function renderGetFriendship($id)
+    {
     
+    	$id_2nd = dibi::fetchSingle("SELECT [id] FROM [users] WHERE [email] = %s", $_GET['email']);
+    	dibi::query('INSERT INTO [friendships] VALUES (%i, %i)', $id, $id_2nd);
+
+		$this->data = TRUE;
+    }
+
+
+
     // TODO PUT/DELETE handling
     // TODO read http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
 
