@@ -1,5 +1,6 @@
 package cz.vutbr.fit.tam.and10.activities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
@@ -36,11 +38,22 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends);
 
-        this.sqlDriver = new SQLDriver(this);
-        this.model = new GameModel();
-
+        try {
+			this.sqlDriver = new SQLDriver(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.model = new GameModel();
 		this.friends = sqlDriver.getFriends();
 
+		Log.i("KeepDoin", this.friends.toString());
+		
+		if(this.friends.size() == 0) {
+			Toast.makeText(this, "No friends yet. Don't be shy! Make some!", Toast.LENGTH_LONG).show();
+			return;
+		}
+			
+		
 		// initialize friends gridview
 		GridView gridview = (GridView) findViewById(R.id.friendsview);
         gridview.setAdapter(new FriendListAdapter(this, this.friends));
@@ -59,6 +72,9 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
             	FriendsTab.this.startActivity(myIntent);
             }
         });
+        
+        if(this.sqlDriver != null)
+        	this.sqlDriver.closeDB();
     }
     
     private MainMenu menu;

@@ -16,6 +16,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import cz.vutbr.fit.tam.and10.KeepDoinApplication;
+import cz.vutbr.fit.tam.and10.activities.FriendsTab;
 
 /**
  * @link: 
@@ -26,20 +28,35 @@ import android.util.Log;
  */
 public class SQLDriver extends SQLiteOpenHelper {
 
-	private SQLiteDatabase db;
+	public SQLiteDatabase db;
 	// The Android's default system path of your application database.
 	private String DB_PATH = null;
 	private static String DB_NAME = "keepdoindb";
 	private final Context myContext;
 
-	public SQLDriver(Context context) {
+	public SQLDriver(Context context) throws IOException {
 		super(context, DB_NAME, null, 1);
 		Log.i("KeepDoin", "SQLDriver()");
 		this.myContext = context;
 
 		DB_PATH = "/data/data/"+context.getApplicationContext().getPackageName()+"/databases/";
 
+		// temporarily removing database
+//		File file = new File(DB_PATH+DB_NAME);
+//		if(file.exists()) {
+//			Log.i("KeepDoin", "Database exists");
+//			file.delete();
+//		}
+			
+		this.createDataBase();
 		this.openDataBase();
+		
+		
+		// log files list
+		String list[] = myContext.fileList();
+		for(int i=0; i < list.length ; i++ ) {
+			Log.i("KeepDoin", "file list: "+ list[i]);
+		}
 	}
 
 
@@ -105,10 +122,9 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 		try {
 			String myPath = DB_PATH + DB_NAME;
-			checkDB = SQLiteDatabase.openDatabase(myPath, null,
-					SQLiteDatabase.OPEN_READONLY);
+			checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 		} catch (SQLiteException e) {
-			// database does't exist yet.
+			checkDB = null;
 		}
 
 		if (checkDB != null) {
@@ -181,10 +197,12 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 		return;
 	}
-	
+
+
 
 	public ArrayList<User> getFriends() {
 		Log.i("KeepDoin", "getFriends()");
+		KeepDoinApplication global = (KeepDoinApplication) ((FriendsTab) myContext).getApplication();
 
 		ArrayList<User> friends = new ArrayList<User>();
 		Cursor cur = null;
@@ -192,23 +210,62 @@ public class SQLDriver extends SQLiteOpenHelper {
 		cur = db.rawQuery("SELECT * FROM friends", new String [] {});
 
 		cur.moveToFirst();
+		Log.i("KeepDoin", "accoutnId: "+global.accountId);
 		while (cur.isAfterLast() == false) {
-			User user = new User(cur.getInt(cur.getColumnIndex("email")));
+			Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+
+			User user = new User(cur.getInt(cur.getColumnIndex("id")));
+			
 			user.setName(cur.getString(cur.getColumnIndex("name")));
 			user.setEmail(cur.getString(cur.getColumnIndex("email")));
 
-			friends.add(user);
+			Log.i("KeepDoin", "user: "+user.getName());
+			Log.i("KeepDoin", "user: "+user.getEmail());
+			if(user.getId() != global.accountId) {
+				friends.add(user);
+			}
 
 			cur.moveToNext();
 		}
 		cur.close();
 		return friends;
+	}
+
+
+
+	public User getUser(int id) {
+		Log.i("KeepDoin", "getUser()");
+
+		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
+		cur.moveToFirst();
+		User user = null;
+		
+		Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+
+		user = new User(cur.getInt(cur.getColumnIndex("id")));
+		user.setName(cur.getString(cur.getColumnIndex("name")));
+		user.setEmail(cur.getString(cur.getColumnIndex("email")));
+		
+		cur.close();
+
+		Log.i("KeepDoin", "getUser return");
+		return user;
 	} 
 
 
-	
+
 	public void truncateTable(String table) {
 		String query = "DELETE FROM "+table+";";
 		this.execSQL(query);
+	}
+	
+	
+	public void closeDB() {
+		Log.i("KeepDoin", "closeDB()");
+		
+		if(db != null) {
+			Log.i("KeepDoin", "closing database");
+			db.close();
+		}
 	}
 }

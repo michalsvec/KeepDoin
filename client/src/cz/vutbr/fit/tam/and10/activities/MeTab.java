@@ -1,5 +1,7 @@
 package cz.vutbr.fit.tam.and10.activities;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,7 +36,12 @@ public class MeTab extends Activity implements AccountInfoHolder {
         
         // nacteni informaci o uzivateli
         User user = new User(userId);
-        user.loadData();
+        try {
+			user.loadData(this);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         TextView real_name = (TextView) findViewById(R.id.real_name);
         real_name.setText(user.getName());
         

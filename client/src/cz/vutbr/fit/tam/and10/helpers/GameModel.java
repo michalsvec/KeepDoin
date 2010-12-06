@@ -36,26 +36,19 @@ public class GameModel {
 
 
 
+
 	/**
-	 * Returns informations about user
-	 * 
-	 * @param user_id
-	 * @throws IOException 
-	 * @throws ClientProtocolException 
-	 * @throws JSONException 
+	 * Common download method
+	 * @param accountId actual logged user
+	 * @param apiType   /api/apiType/id
+	 * @return
+	 * @throws ClientProtocolException
+	 * @throws IOException
+	 * @throws JSONException
 	 */
-	public JSONObject getUserinfo(int user_id) throws ClientProtocolException, IOException, JSONException {
+	public JSONObject getApiResult(int accountId, String apiType) throws ClientProtocolException, IOException, JSONException {
 		JSONObject json = new JSONObject();
-		String requestURL = serverURL + "user/" + user_id;
-		json = processHttpRequest(requestURL, RESTMethods.GET, null);
-		return json;
-	}
-
-
-
-	public JSONObject getFriendsList(int accountId) throws ClientProtocolException, IOException, JSONException {
-		JSONObject json = new JSONObject();
-		String requestURL = serverURL + "friends/"+accountId;
+		String requestURL = serverURL + apiType+"/"+accountId;
 		json = processHttpRequest(requestURL, RESTMethods.GET, null);
 		return json;
 	} 

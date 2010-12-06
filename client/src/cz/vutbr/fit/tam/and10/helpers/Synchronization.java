@@ -17,8 +17,10 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 import cz.vutbr.fit.tam.and10.KeepDoinApplication;
+import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 
 public class Synchronization {
 
@@ -29,9 +31,9 @@ public class Synchronization {
 
 	public Synchronization(Context c) {
 		mContext = (Activity) c;	// pretypovai kvuli atributum
-		db = new SQLDriver(c);
+
 		try {
-			db.createDataBase();
+			db = new SQLDriver(c);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -42,7 +44,7 @@ public class Synchronization {
 	/**
 	 * Download friend list, save to local sql database and downloads avatars
 	 */
-	public void synchronizeFriends() {
+	public void synchronizeFriendsAndUser() {
 		
         // load friend list
         JSONObject friendsList = null;
@@ -50,14 +52,24 @@ public class Synchronization {
         
         GameModel model = new GameModel();
         try {
+
         	KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
-			friendsList = model.getFriendsList(global.accountId);
+        	friendsList = model.getApiResult(global.accountId, "friendsanduser");
 
 			// friends table truncate
 			this.db.truncateTable("friends");
+			Cursor cur = db.db.rawQuery("SELECT name FROM sqlite_master ORDER BY name", new String [] {});
+
+			cur.moveToFirst();
+			while (cur.isAfterLast() == false) {
+				Log.i("KeepDoin", "tabulka:"+cur.getString(cur.getColumnIndex("name")));
+				cur.moveToNext();
+			}
+			cur.close();
+
 
 			if(friendsList != null) {
-				friendsArray = friendsList.getJSONArray("friends");
+				friendsArray = friendsList.getJSONArray("friendsanduser");
 	
 				for (int i = 0; i < friendsArray.length(); i++) {
 					JSONObject user = null;
@@ -113,7 +125,7 @@ public class Synchronization {
 		}
 
 		try {
-			FileOutputStream fos = mContext.openFileOutput(target_file, mContext.MODE_PRIVATE);
+			FileOutputStream fos = mContext.openFileOutput(target_file, Context.MODE_PRIVATE);
 			fos.write(baf.toByteArray());
 			fos.close();
 		} catch (FileNotFoundException e) {
@@ -126,9 +138,9 @@ public class Synchronization {
 
 
 	public void synchronize() {
-		
 		KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
-//      FIXME  mContext.accountId =  global.accountId;
-		synchronizeFriends();
+		((AccountInfoHolder)mContext).setAccountId(global.accountId);
+		synchronizeFriendsAndUser();
+		
 	}
 }

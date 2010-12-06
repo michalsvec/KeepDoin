@@ -16,9 +16,8 @@
         <activity android:label="Friends" android:name=".activities.FriendsTab" android:icon="@drawable/ico_tab_friends"></activity>
         <activity android:label="Me" android:name=".activities.MeTab" android:icon="@drawable/ico_tab_me"></activity>
         <activity android:label="User detail" android:name=".activities.UserDetail"></activity>
-        
-    <activity android:name=".activities.ManageCategories" android:label="Manage Categories"></activity>
-</application>
+    	<activity android:name=".activities.ManageCategories" android:label="Manage Categories"></activity>
+	</application>
     
     <!-- internet connection security permission -->
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>

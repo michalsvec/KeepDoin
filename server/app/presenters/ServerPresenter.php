@@ -11,7 +11,8 @@
 
 /**
  * Server presenter.
- * 
+ *
+ *
  * http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
  * http://www.gen-x-design.com/archives/making-restful-requests-in-php/
  * http://www.recessframework.org/page/towards-restful-php-5-basic-tips
@@ -57,8 +58,8 @@ class ServerPresenter extends BasePresenter
 	{
 		return json_decode(file_get_contents('php://input'));
 	}
-
-	
+    
+    
     
     /* *********************** API METHODS *********************** */
     
@@ -143,6 +144,7 @@ class ServerPresenter extends BasePresenter
             SELECT id, real_name, rank_id, email
             FROM [users]
         ')->fetchAll();
+        
     }
 
 
@@ -153,6 +155,11 @@ class ServerPresenter extends BasePresenter
     	
     	
     	$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
+
+		if(empty($friendships)) {
+			$this->data['status'] = FALSE;
+			return;
+		}
     	
     	$friends = array();
     	foreach($friendships as $friendship) {
@@ -167,6 +174,33 @@ class ServerPresenter extends BasePresenter
         ', $id);
     }
 
+
+
+    public function renderGetFriendsAndUser($id)
+    {
+    	$this->data = array();
+    	
+		$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
+
+        $query[] = 'SELECT id, real_name as name, rank_id, email
+            FROM [users] WHERE'; 
+
+		if(!empty($friendships)) {
+	    	$ids = array();
+
+	    	foreach($friendships as $friendship) {
+	    		$ids[] = $friendship->user1_id;
+	    		$ids[] = $friendship->user2_id;
+	    	}
+	    	
+	    	$query[] = '([id] IN ('.join(", ", $ids).')) OR ';
+		}
+    	
+    	$query[] = " [id] = %i";
+    	$query[] = $id;
+
+        $this->data['friendsanduser'] = dibi::fetchAll($query);
+    }
 
 
 	/**
@@ -236,8 +270,6 @@ class ServerPresenter extends BasePresenter
     public function renderGetFriendship($id)
     {
     
-<<<<<<< HEAD
-=======
     	$id_2nd = dibi::fetchSingle("SELECT [id] FROM [users] WHERE [email] = %s", $_GET['email']);
     	dibi::query('INSERT INTO [friendships] VALUES (%i, %i)', $id, $id_2nd);
 
@@ -249,5 +281,4 @@ class ServerPresenter extends BasePresenter
     // TODO PUT/DELETE handling
     // TODO read http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
 
->>>>>>> 71ff7371b8e36592055daae45fb7697b5e37b96d
 }
