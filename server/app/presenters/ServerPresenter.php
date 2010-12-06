@@ -7,12 +7,11 @@
  * @copyright Copyright (c) 2010 Jan Javorek
  */
 
-
+require_once ('encryption.php');
 
 /**
  * Server presenter.
- *
- *
+ * 
  * http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
  * http://www.gen-x-design.com/archives/making-restful-requests-in-php/
  * http://www.recessframework.org/page/towards-restful-php-5-basic-tips
@@ -58,8 +57,8 @@ class ServerPresenter extends BasePresenter
 	{
 		return json_decode(file_get_contents('php://input'));
 	}
-    
-    
+
+	
     
     /* *********************** API METHODS *********************** */
     
@@ -71,6 +70,9 @@ class ServerPresenter extends BasePresenter
 		    WHERE [id] = %i
 		', $id)->fetch();
 		unset($this->data['password']);
+		
+		$this->data['encrypted_name'] = encrypt($this->data['real_name'], '1234567');
+		$this->data['decrypted_name'] = decrypt($this->data['encrypted_name'], '1234567');
 		
 		// TODO post-db hook to compute score every time
 	}
@@ -144,7 +146,6 @@ class ServerPresenter extends BasePresenter
             SELECT id, real_name, rank_id, email
             FROM [users]
         ')->fetchAll();
-        
     }
 
 
@@ -155,11 +156,12 @@ class ServerPresenter extends BasePresenter
     	
     	
     	$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
-
-		if(empty($friendships)) {
-			$this->data['status'] = FALSE;
-			return;
-		}
+    	
+    	
+        if(empty($friendships)) {
+        	$this->data['status'] = FALSE;
+        	return;
+    	}
     	
     	$friends = array();
     	foreach($friendships as $friendship) {
@@ -174,33 +176,6 @@ class ServerPresenter extends BasePresenter
         ', $id);
     }
 
-
-
-    public function renderGetFriendsAndUser($id)
-    {
-    	$this->data = array();
-    	
-		$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
-
-        $query[] = 'SELECT id, real_name as name, rank_id, email
-            FROM [users] WHERE'; 
-
-		if(!empty($friendships)) {
-	    	$ids = array();
-
-	    	foreach($friendships as $friendship) {
-	    		$ids[] = $friendship->user1_id;
-	    		$ids[] = $friendship->user2_id;
-	    	}
-	    	
-	    	$query[] = '([id] IN ('.join(", ", $ids).')) OR ';
-		}
-    	
-    	$query[] = " [id] = %i";
-    	$query[] = $id;
-
-        $this->data['friendsanduser'] = dibi::fetchAll($query);
-    }
 
 
 	/**
@@ -278,7 +253,33 @@ class ServerPresenter extends BasePresenter
 
 
 
+	public function renderGetFriendsAndUser($id)
+    {
+    	$this->data = array();
+    	
+		$friendships = dibi::fetchAll("SELECT * FROM [friendships] WHERE [user1_id] = %i OR user2_id = %i", $id, $id);
+
+        $query[] = 'SELECT id, real_name as name, rank_id, email
+            FROM [users] WHERE'; 
+
+		if(!empty($friendships)) {
+	    	$ids = array();
+
+	    	foreach($friendships as $friendship) {
+	    		$ids[] = $friendship->user1_id;
+	    		$ids[] = $friendship->user2_id;
+	    	}
+	    	
+	    	$query[] = '([id] IN ('.join(", ", $ids).')) OR ';
+		}
+    	
+    	$query[] = " [id] = %i";
+    	$query[] = $id;
+
+        $this->data['friendsanduser'] = dibi::fetchAll($query);
+    }
+
+
     // TODO PUT/DELETE handling
     // TODO read http://www.gen-x-design.com/archives/create-a-rest-api-with-php/
-
 }

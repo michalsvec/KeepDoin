@@ -133,7 +133,7 @@ public class GameModel {
 		}
 		else {
 			Log.e("KeepDoin", "HttpStatus != OK");
-			return null;
+			throw new ClientProtocolException("404");
 		}
 		return null;
 	}

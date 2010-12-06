@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.ByteArrayBuffer;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +20,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
+import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 
@@ -54,7 +56,12 @@ public class Synchronization {
         try {
 
         	KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
-        	friendsList = model.getApiResult(global.accountId, "friendsanduser");
+        	try {
+        		friendsList = model.getApiResult(global.accountId, "friendsanduser");
+        	} catch(ClientProtocolException e) {
+        		Toast.makeText(mContext, "Friends synchronization failed with 404. Try again later", Toast.LENGTH_LONG).show();
+        		return;
+        	}
 
 			// friends table truncate
 			this.db.truncateTable("friends");
@@ -141,6 +148,7 @@ public class Synchronization {
 		KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
 		((AccountInfoHolder)mContext).setAccountId(global.accountId);
 		synchronizeFriendsAndUser();
-		
+
+		db.closeDB();
 	}
 }

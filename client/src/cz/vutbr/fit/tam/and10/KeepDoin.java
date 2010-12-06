@@ -278,10 +278,7 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
         global.accountName = this.accountName;
 
 
-        Intent intent = new Intent(KeepDoin.this, MainWindow.class);
-
-        Log.i("KeepDoin", "starting activity MainWindow");
-        startActivity(intent);
+        startApp();
     }
     
     @Override
@@ -294,6 +291,14 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
 		return accountName;
 	}
 
+	
+	public void startApp() {
+        Intent intent = new Intent(KeepDoin.this, MainWindow.class);
+
+        Log.i("KeepDoin", "starting activity MainWindow");
+        startActivity(intent);
+	}
+	
 	@Override
 	public void setAccountId(int accountId) {
 		this.accountId = accountId;
@@ -303,4 +308,6 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
 	}
+	
+	
 }
