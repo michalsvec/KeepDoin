@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.dialogs.AddTaskDialog;
 import cz.vutbr.fit.tam.and10.dialogs.ChangeCategoryTextDialog;
+import cz.vutbr.fit.tam.and10.dialogs.RemoveCategoryDialog;
+import cz.vutbr.fit.tam.and10.dialogs.TextDialog;
 
 public class Category {
 
@@ -30,7 +32,9 @@ public class Category {
 	}
 	
 	public void changeTextDialog() {
-		new ChangeCategoryTextDialog(activity, this).show();
+		TextDialog d = new ChangeCategoryTextDialog(activity, this);
+		d.setDefaultValue(name);
+		d.show();
 	}
 	
 	public void changeText(String text) {
@@ -46,7 +50,7 @@ public class Category {
 	}
 	
 	public void removeDialog() {
-		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
+		new RemoveCategoryDialog(activity, this).show();
 	}
 	
 	public void remove() {
