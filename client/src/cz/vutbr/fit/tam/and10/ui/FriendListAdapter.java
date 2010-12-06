@@ -55,12 +55,15 @@ public class FriendListAdapter extends BaseAdapter {
             String[] nameTokens = this.friends.get(position).getName().split(" ");
 			tv.setText(nameTokens[0]);
 
+			Log.i("KeepDoin", nameTokens.toString());
+			
 			// seznam souboru
 			String list[] = mContext.fileList();
 			for(int i=0; i < list.length ; i++ ) {
 				Log.i("KeepDoin", "file list: "+ list[i]);
 			}
 
+			Log.i("KeepDoin", nameTokens.toString());
 			
 			// search local storage for avatar
 			String email = this.friends.get(position).getEmail();

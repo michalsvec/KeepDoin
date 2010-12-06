@@ -16,6 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 import cz.vutbr.fit.tam.and10.KDGlobal;
 import cz.vutbr.fit.tam.and10.activities.BaseActivity;
@@ -29,9 +30,8 @@ public class Synchronization {
 
 	public Synchronization(Context c) {
 		mContext = (BaseActivity) c;	// pretypovai kvuli atributum
-		db = new SQLDriver(c);
 		try {
-			db.createDataBase();
+			db = new SQLDriver(c);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -55,6 +55,15 @@ public class Synchronization {
 
 			// friends table truncate
 			this.db.truncateTable("friends");
+			Cursor cur = db.db.rawQuery("SELECT name FROM sqlite_master ORDER BY name;", new String [] {});
+
+			cur.moveToFirst();
+			while (cur.isAfterLast() == false) {
+				Log.i("KeepDoin", "tabulka:"+cur.getString(cur.getColumnIndex("name")));
+				cur.moveToNext();
+			}
+			cur.close();
+
 
 			if(friendsList != null) {
 				friendsArray = friendsList.getJSONArray("friends");

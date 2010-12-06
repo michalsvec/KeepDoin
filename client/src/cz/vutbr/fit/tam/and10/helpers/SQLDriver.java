@@ -1,5 +1,6 @@
 package cz.vutbr.fit.tam.and10.helpers;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,20 +27,35 @@ import android.util.Log;
  */
 public class SQLDriver extends SQLiteOpenHelper {
 
-	private SQLiteDatabase db;
+	public SQLiteDatabase db;
 	// The Android's default system path of your application database.
 	private String DB_PATH = null;
 	private static String DB_NAME = "keepdoindb";
 	private final Context myContext;
 
-	public SQLDriver(Context context) {
+	public SQLDriver(Context context) throws IOException {
 		super(context, DB_NAME, null, 1);
 		Log.i("KeepDoin", "SQLDriver()");
 		this.myContext = context;
 
 		DB_PATH = "/data/data/"+context.getApplicationContext().getPackageName()+"/databases/";
 
+		// temporarily removing database
+//		File file = new File(DB_PATH+DB_NAME);
+//		if(file.exists()) {
+//			Log.i("KeepDoin", "Database exists");
+//			file.delete();
+//		}
+			
+		this.createDataBase();
 		this.openDataBase();
+		
+		
+		// log files list
+		String list[] = myContext.fileList();
+		for(int i=0; i < list.length ; i++ ) {
+			Log.i("KeepDoin", "file list: "+ list[i]);
+		}
 	}
 
 
@@ -105,10 +121,9 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 		try {
 			String myPath = DB_PATH + DB_NAME;
-			checkDB = SQLiteDatabase.openDatabase(myPath, null,
-					SQLiteDatabase.OPEN_READONLY);
+			checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
 		} catch (SQLiteException e) {
-			// database does't exist yet.
+			checkDB = null;
 		}
 
 		if (checkDB != null) {

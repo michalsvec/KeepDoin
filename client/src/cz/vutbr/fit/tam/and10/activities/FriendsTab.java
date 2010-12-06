@@ -1,5 +1,6 @@
 package cz.vutbr.fit.tam.and10.activities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Intent;
@@ -30,8 +31,12 @@ public class FriendsTab extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.friends);
 
-        this.sqlDriver = new SQLDriver(this);
-        this.model = new GameModel();
+        try {
+			this.sqlDriver = new SQLDriver(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.model = new GameModel();
 
 		this.friends = sqlDriver.getFriends();
 
