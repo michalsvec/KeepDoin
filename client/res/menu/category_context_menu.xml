@@ -6,11 +6,11 @@
 	/>
 	<item
        android:id="@+id/context_menu_move_up"
-       android:title="@string/context_menu_change_priority"
+       android:title="@string/context_menu_move_up"
     />
     <item
        android:id="@+id/context_menu_move_down"
-       android:title="@string/context_menu_change_deadline"
+       android:title="@string/context_menu_move_down"
     />
     <item
        android:id="@+id/context_menu_remove"

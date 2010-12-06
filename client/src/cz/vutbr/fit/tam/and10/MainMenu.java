@@ -26,7 +26,7 @@ public class MainMenu {
 	public MainMenu(Activity a, int menuResource, Menu menu) {
 		activity = a;
 		MenuInflater inflater = a.getMenuInflater();
-		inflater.inflate(R.menu.main_menu, menu);
+		inflater.inflate(menuResource, menu);
 	}
 
 	private void doSynchronize() {

@@ -61,16 +61,16 @@ public class Tasks {
 	
 	public void addCategory(final Category c) {
 		LayoutInflater inflater = LayoutInflater.from(activity);
-		View v = inflater.inflate(R.layout.category_header, null);
+		View v = inflater.inflate(R.layout.header, null);
 		
-		ImageButton addTask = (ImageButton)v.findViewById(R.id.add_task);
+		ImageButton addTask = (ImageButton)v.findViewById(R.id.header_add);
 		addTask.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				c.createTask();
 			}
 		});
 		
-		TextView n = (TextView)v.findViewById(R.id.category_name);
+		TextView n = (TextView)v.findViewById(R.id.header_name);
 		n.setText(c.getName());
 		
 		adapter.addView(v);
