@@ -1,6 +1,7 @@
 package cz.vutbr.fit.tam.and10.activities;
 
-import android.app.Activity;
+import java.io.IOException;
+
 import android.os.Bundle;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -33,7 +34,11 @@ public class UserDetail extends BaseActivity {
         
         // nacteni informaci o uzivateli
         User user = new User(userId);
-        user.loadData();
+        try {
+			user.loadData(this);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
         TextView real_name = (TextView) findViewById(R.id.real_name);
         real_name.setText(user.getName());
         

@@ -42,7 +42,7 @@ public class Synchronization {
 	/**
 	 * Download friend list, save to local sql database and downloads avatars
 	 */
-	public void synchronizeFriends() {
+	public void synchronizeFriendsAndUser() {
 		
         // load friend list
         JSONObject friendsList = null;
@@ -51,7 +51,7 @@ public class Synchronization {
         GameModel model = new GameModel();
         try {
         	KDGlobal global = (KDGlobal) mContext.getApplication();
-			friendsList = model.getFriendsList(global.accountId);
+			friendsList = model.getApiResult(global.accountId, "friendsanduser");
 
 			// friends table truncate
 			this.db.truncateTable("friends");
@@ -66,7 +66,7 @@ public class Synchronization {
 
 
 			if(friendsList != null) {
-				friendsArray = friendsList.getJSONArray("friends");
+				friendsArray = friendsList.getJSONArray("friendsanduser");
 	
 				for (int i = 0; i < friendsArray.length(); i++) {
 					JSONObject user = null;
@@ -122,7 +122,7 @@ public class Synchronization {
 		}
 
 		try {
-			FileOutputStream fos = mContext.openFileOutput(target_file, mContext.MODE_PRIVATE);
+			FileOutputStream fos = mContext.openFileOutput(target_file, Context.MODE_PRIVATE);
 			fos.write(baf.toByteArray());
 			fos.close();
 		} catch (FileNotFoundException e) {
@@ -138,6 +138,6 @@ public class Synchronization {
 		
 		KDGlobal global = (KDGlobal) mContext.getApplication();
         mContext.accountId =  global.accountId;
-		synchronizeFriends();
+		synchronizeFriendsAndUser();
 	}
 }

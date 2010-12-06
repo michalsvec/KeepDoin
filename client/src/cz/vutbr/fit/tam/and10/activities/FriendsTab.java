@@ -37,9 +37,10 @@ public class FriendsTab extends BaseActivity {
 			e.printStackTrace();
 		}
 		this.model = new GameModel();
-
 		this.friends = sqlDriver.getFriends();
 
+		Log.i("KeepDoin", this.friends.toString());
+		
 		// initialize friends gridview
 		GridView gridview = (GridView) findViewById(R.id.friendsview);
         gridview.setAdapter(new FriendListAdapter(this, this.friends));

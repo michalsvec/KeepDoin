@@ -6,8 +6,10 @@ import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
 
-public class User {
+
+public class User extends Object {
 
 	private int userId;
 	private int rankId;
@@ -31,30 +33,17 @@ public class User {
 		this.userId = id;
 	}
 
-	
-	public void loadData() {
-		GameModel model = new GameModel();
-		JSONObject json = null;
-
-		try {
-			json = model.getUserinfo(this.userId);
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			this.rankId = json.getInt("rank_id");
-			this.real_name = json.getString("real_name");
-			this.email = json.getString("email");
+	// piece of crap, but no time!! :(
+	// @author: misa
+	public void loadData(Context c) throws IOException {
 		
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		SQLDriver db = new SQLDriver(c);
+		User tmp = null;
+		tmp = db.getUser(this.userId);
+
+		this.rankId = tmp.getId();
+		this.real_name = tmp.getName();
+		this.email = tmp.getEmail();
 	}
 
 

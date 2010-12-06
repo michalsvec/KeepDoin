@@ -1,6 +1,5 @@
 package cz.vutbr.fit.tam.and10.helpers;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +16,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import cz.vutbr.fit.tam.and10.KDGlobal;
+import cz.vutbr.fit.tam.and10.KeepDoin;
+import cz.vutbr.fit.tam.and10.activities.FriendsTab;
 
 /**
  * @link: 
@@ -196,10 +198,12 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 		return;
 	}
-	
+
+
 
 	public ArrayList<User> getFriends() {
 		Log.i("KeepDoin", "getFriends()");
+		KDGlobal global = (KDGlobal) ((FriendsTab) myContext).getApplication();
 
 		ArrayList<User> friends = new ArrayList<User>();
 		Cursor cur = null;
@@ -207,21 +211,49 @@ public class SQLDriver extends SQLiteOpenHelper {
 		cur = db.rawQuery("SELECT * FROM friends", new String [] {});
 
 		cur.moveToFirst();
+		Log.i("KeepDoin", "accoutnId: "+global.accountId);
 		while (cur.isAfterLast() == false) {
-			User user = new User(cur.getInt(cur.getColumnIndex("email")));
+			Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+
+			User user = new User(cur.getInt(cur.getColumnIndex("id")));
+			
 			user.setName(cur.getString(cur.getColumnIndex("name")));
 			user.setEmail(cur.getString(cur.getColumnIndex("email")));
 
-			friends.add(user);
+			Log.i("KeepDoin", "user: "+user.getName());
+			Log.i("KeepDoin", "user: "+user.getEmail());
+			if(user.getId() != global.accountId) {
+				friends.add(user);
+			}
 
 			cur.moveToNext();
 		}
 		cur.close();
 		return friends;
+	}
+
+
+
+	public User getUser(int id) {
+		Log.i("KeepDoin", "getUser()");
+
+		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
+		cur.moveToFirst();
+		while (cur.isAfterLast() == false) {
+			Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+
+			User user = new User(cur.getInt(cur.getColumnIndex("id")));
+			
+			user.setName(cur.getString(cur.getColumnIndex("name")));
+			user.setEmail(cur.getString(cur.getColumnIndex("email")));
+
+			return user;
+		}
+		return null;
 	} 
 
 
-	
+
 	public void truncateTable(String table) {
 		String query = "DELETE FROM "+table+";";
 		this.execSQL(query);

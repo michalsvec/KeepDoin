@@ -53,6 +53,7 @@ public class FriendListAdapter extends BaseAdapter {
             // get first name
             TextView tv = (TextView)view.findViewById(R.id.icon_text);
             String[] nameTokens = this.friends.get(position).getName().split(" ");
+            
 			tv.setText(nameTokens[0]);
 
 			Log.i("KeepDoin", nameTokens.toString());
