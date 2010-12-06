@@ -66,7 +66,7 @@ public class Tasks {
 		ImageButton addTask = (ImageButton)v.findViewById(R.id.header_add);
 		addTask.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				c.createTask();
+				c.createTaskDialog();
 			}
 		});
 		

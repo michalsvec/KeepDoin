@@ -46,7 +46,7 @@ public class ManageCategories extends Activity implements AccountInfoHolder {
 			list.setOnItemClickListener(new OnItemClickListener() {
 	        	public void onItemClick(AdapterView<?> av, View v, int position, long id) {
 	        		Category c = (Category)adapter.getItem(position);
-	        		c.changeText();
+	        		c.changeTextDialog();
 	        	}
 	        });
 	        registerForContextMenu(list);
@@ -91,7 +91,7 @@ public class ManageCategories extends Activity implements AccountInfoHolder {
     	
     	switch (item.getItemId()) {
 		case R.id.context_menu_change_text:
-			category.changeText();
+			category.changeTextDialog();
 			return true;
 		case R.id.context_menu_move_up:
 			category.moveUp();
@@ -100,7 +100,7 @@ public class ManageCategories extends Activity implements AccountInfoHolder {
 			category.moveDown();
 			return true;
 		case R.id.context_menu_remove:
-			category.remove();
+			category.removeDialog();
 			return true;
 		}
 		return false;

@@ -2,6 +2,8 @@ package cz.vutbr.fit.tam.and10.category;
 
 import android.app.Activity;
 import android.widget.Toast;
+import cz.vutbr.fit.tam.and10.dialogs.AddTaskDialog;
+import cz.vutbr.fit.tam.and10.dialogs.ChangeCategoryTextDialog;
 
 public class Category {
 
@@ -19,12 +21,20 @@ public class Category {
 //		categories.add(order, this);
 	}
 	
-	public void createTask() {
-		Toast.makeText(activity, "add task in category " + getName(), Toast.LENGTH_SHORT).show();
+	public void createTaskDialog() {
+		new AddTaskDialog(activity, this).show();
 	}
 	
-	public void changeText() {
-		Toast.makeText(activity, "change text of " + getName(), Toast.LENGTH_SHORT).show();
+	public void createTask(String text) {
+		Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+	}
+	
+	public void changeTextDialog() {
+		new ChangeCategoryTextDialog(activity, this).show();
+	}
+	
+	public void changeText(String text) {
+		Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
 	}
 	
 	public void moveUp() {
@@ -33,6 +43,10 @@ public class Category {
 	
 	public void moveDown() {
 		Toast.makeText(activity, "move down " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void removeDialog() {
+		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
 	}
 	
 	public void remove() {

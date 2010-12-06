@@ -33,7 +33,7 @@ public class NowTab extends Activity implements AccountInfoHolder {
     }
     
     private MainMenu menu;
-	
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	this.menu = new MainMenu(this, R.menu.main_menu_tasks, menu);

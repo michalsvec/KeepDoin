@@ -47,7 +47,7 @@ public class MainMenu {
 		final EditText input = new EditText(activity);
 		alert.setView(input);
 
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String email = input.getText().toString().trim();
 
