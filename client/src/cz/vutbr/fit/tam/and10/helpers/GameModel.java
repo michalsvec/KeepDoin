@@ -25,6 +25,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import cz.vutbr.fit.tam.and10.KeepDoin;
+import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 
 public class GameModel {
 
@@ -288,7 +289,7 @@ public class GameModel {
 			
 			if(status) {
 				// now the ID is available from the application
-				((KeepDoin) context).accountId = id;
+				((AccountInfoHolder)context).setAccountId(id);
 				Log.i("KeepDoin", " accountId set");
 				sendResult(true, handler, context);
 			}

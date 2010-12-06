@@ -15,21 +15,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
-import cz.vutbr.fit.tam.and10.KDGlobal;
-import cz.vutbr.fit.tam.and10.activities.BaseActivity;
+import cz.vutbr.fit.tam.and10.KeepDoinApplication;
+import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 
 public class Synchronization {
 
-	private BaseActivity mContext;
+	private Activity mContext;
 	private SQLDriver db;
 
 
 
 	public Synchronization(Context c) {
-		mContext = (BaseActivity) c;	// pretypovai kvuli atributum
+		mContext = (Activity) c;	// pretypovai kvuli atributum
+
 		try {
 			db = new SQLDriver(c);
 		} catch (IOException e) {
@@ -50,12 +52,13 @@ public class Synchronization {
         
         GameModel model = new GameModel();
         try {
-        	KDGlobal global = (KDGlobal) mContext.getApplication();
-			friendsList = model.getApiResult(global.accountId, "friendsanduser");
+
+        	KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
+        	friendsList = model.getApiResult(global.accountId, "friendsanduser");
 
 			// friends table truncate
 			this.db.truncateTable("friends");
-			Cursor cur = db.db.rawQuery("SELECT name FROM sqlite_master ORDER BY name;", new String [] {});
+			Cursor cur = db.db.rawQuery("SELECT name FROM sqlite_master ORDER BY name", new String [] {});
 
 			cur.moveToFirst();
 			while (cur.isAfterLast() == false) {
@@ -135,9 +138,9 @@ public class Synchronization {
 
 
 	public void synchronize() {
-		
-		KDGlobal global = (KDGlobal) mContext.getApplication();
-        mContext.accountId =  global.accountId;
+		KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
+		((AccountInfoHolder)mContext).setAccountId(global.accountId);
 		synchronizeFriendsAndUser();
+		
 	}
 }

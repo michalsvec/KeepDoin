@@ -16,8 +16,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import cz.vutbr.fit.tam.and10.KDGlobal;
-import cz.vutbr.fit.tam.and10.KeepDoin;
+import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.FriendsTab;
 
 /**
@@ -203,7 +202,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 	public ArrayList<User> getFriends() {
 		Log.i("KeepDoin", "getFriends()");
-		KDGlobal global = (KDGlobal) ((FriendsTab) myContext).getApplication();
+		KeepDoinApplication global = (KeepDoinApplication) ((FriendsTab) myContext).getApplication();
 
 		ArrayList<User> friends = new ArrayList<User>();
 		Cursor cur = null;
@@ -239,17 +238,18 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
 		cur.moveToFirst();
-		while (cur.isAfterLast() == false) {
-			Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+		User user = null;
+		
+		Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
 
-			User user = new User(cur.getInt(cur.getColumnIndex("id")));
-			
-			user.setName(cur.getString(cur.getColumnIndex("name")));
-			user.setEmail(cur.getString(cur.getColumnIndex("email")));
+		user = new User(cur.getInt(cur.getColumnIndex("id")));
+		user.setName(cur.getString(cur.getColumnIndex("name")));
+		user.setEmail(cur.getString(cur.getColumnIndex("email")));
+		
+		cur.close();
 
-			return user;
-		}
-		return null;
+		Log.i("KeepDoin", "getUser return");
+		return user;
 	} 
 
 
@@ -257,5 +257,15 @@ public class SQLDriver extends SQLiteOpenHelper {
 	public void truncateTable(String table) {
 		String query = "DELETE FROM "+table+";";
 		this.execSQL(query);
+	}
+	
+	
+	public void closeDB() {
+		Log.i("KeepDoin", "closeDB()");
+		
+		if(db != null) {
+			Log.i("KeepDoin", "closing database");
+			db.close();
+		}
 	}
 }

@@ -44,6 +44,8 @@ public class User extends Object {
 		this.rankId = tmp.getId();
 		this.real_name = tmp.getName();
 		this.email = tmp.getEmail();
+		
+		db.closeDB();
 	}
 
 

@@ -5,4 +5,7 @@
           android:title="Synchronize" 
           android:icon="@drawable/ico_menu_synchronization"/>  
 
+    <item android:id="@+id/menu_manage_categories"
+          android:title="Manage categories" 
+          android:icon="@drawable/ico_menu_manage_categories"/>
 </menu>

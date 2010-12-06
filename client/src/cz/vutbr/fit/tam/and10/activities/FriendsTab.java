@@ -3,23 +3,30 @@ package cz.vutbr.fit.tam.and10.activities;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.helpers.GameModel;
 import cz.vutbr.fit.tam.and10.helpers.SQLDriver;
 import cz.vutbr.fit.tam.and10.helpers.User;
 import cz.vutbr.fit.tam.and10.ui.FriendListAdapter;
 
-public class FriendsTab extends BaseActivity {
+public class FriendsTab extends Activity implements AccountInfoHolder {
+	
+	private String accountName;
+	private int accountId;
 	
 	//private User friends[] = null;
-
 
 	private ArrayList<User> friends;
 	private SQLDriver sqlDriver = null;
@@ -41,6 +48,12 @@ public class FriendsTab extends BaseActivity {
 
 		Log.i("KeepDoin", this.friends.toString());
 		
+		if(this.friends.size() == 0) {
+			Toast.makeText(this, "No friends yet. Don't be shy! Make some!", Toast.LENGTH_LONG).show();
+			return;
+		}
+			
+		
 		// initialize friends gridview
 		GridView gridview = (GridView) findViewById(R.id.friendsview);
         gridview.setAdapter(new FriendListAdapter(this, this.friends));
@@ -60,6 +73,40 @@ public class FriendsTab extends BaseActivity {
             }
         });
         
-
+        if(this.sqlDriver != null)
+        	this.sqlDriver.closeDB();
     }
+    
+    private MainMenu menu;
+	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	this.menu = new MainMenu(this, R.menu.main_menu_friends, menu);
+    	return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	return this.menu.onOptionsItemSelected(item);
+    }
+    
+    @Override
+	public int getAccountId() {
+		return accountId;
+	}
+
+	@Override
+	public String getAccountName() {
+		return accountName;
+	}
+
+	@Override
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
+	}
+
+	@Override
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
 }
