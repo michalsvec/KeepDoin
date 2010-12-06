@@ -6,6 +6,10 @@ import java.util.Random;
 import android.app.Activity;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.dialogs.ChangeTaskTextDialog;
+import cz.vutbr.fit.tam.and10.dialogs.DateDialog;
+import cz.vutbr.fit.tam.and10.dialogs.RemoveTaskDialog;
+import cz.vutbr.fit.tam.and10.dialogs.TextDialog;
 
 public class Task {
 
@@ -55,24 +59,46 @@ public class Task {
 	
 	/* ACTIONS ********************************************************************************/
 	
-	public void changeText() {
-		Toast.makeText(activity, "change text of " + getName(), Toast.LENGTH_SHORT).show();
+	public void changeTextDialog() {
+		TextDialog d = new ChangeTaskTextDialog(activity, this);
+		d.setDefaultValue(name);
+		d.show();
+	}
+	
+	public void changeText(String text) {
+		Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+	}
+	
+	public void changePriorityDialog() {
+		
 	}
 	
 	public void changePriority() {
 		Toast.makeText(activity, "change priority of " + getName(), Toast.LENGTH_SHORT).show();
 	}
 	
+	public void changeCategoryDialog() {
+		
+	}
+	
 	public void changeCategory() {
 		Toast.makeText(activity, "change category of " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public void removeDialog() {
+		new RemoveTaskDialog(activity, this).show();
 	}
 	
 	public void remove() {
 		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
 	}
 
-	public void changeDeadline() {
-		Toast.makeText(activity, "change deadline of " + getName(), Toast.LENGTH_SHORT).show();
+	public void changeDeadlineDialog() {
+		new DateDialog(activity, this, year, month, day).show();
+	}
+	
+	public void changeDeadline(int year, int month, int day) {
+		Toast.makeText(activity, "new deadline is " + String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day), Toast.LENGTH_SHORT).show();
 	}
 
 	public void complete() {

@@ -22,7 +22,12 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
     <string name="dialog_add_task_title">Add new task</string>
+    <string name="dialog_add_category_title">Add new category</string>
     <string name="dialog_change_category_text_title">Change category text</string>
+    <string name="dialog_change_task_text_title">Change task text</string>
+    <string name="dialog_remove_category_title">Really remove this category?</string>
+    <string name="dialog_remove_task_title">Really remove this task?</string>
+    <string name="dialog_pick_date">Pick a deadline</string>
 
     <!-- task & category context menu -->
     <string name="context_menu_title">Menu</string>

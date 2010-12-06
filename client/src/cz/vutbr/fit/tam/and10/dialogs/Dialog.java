@@ -12,6 +12,12 @@ abstract public class Dialog {
 	protected View view;
 	protected Builder dialog;
 	
+	public Dialog(Activity activity) {
+		this.activity = activity;
+		dialog = new Builder(activity);
+		prepareDialog(dialog);
+	}
+	
 	public Dialog(Activity activity, int layoutResource) {
 		this.activity = activity;
 		dialog = new Builder(activity);

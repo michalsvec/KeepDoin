@@ -111,19 +111,19 @@ public class Tasks {
     	
     	switch (item.getItemId()) {
 		case R.id.context_menu_change_text:
-			task.changeText();
+			task.changeTextDialog();
 			return true;
 		case R.id.context_menu_change_priority:
-			task.changePriority();
+			task.changePriorityDialog();
 			return true;
 		case R.id.context_menu_change_deadline:
-			task.changeDeadline();
+			task.changeDeadlineDialog();
 			return true;
 		case R.id.context_menu_change_category:
-			task.changeCategory();
+			task.changeCategoryDialog();
 			return true;
 		case R.id.context_menu_remove:
-			task.remove();
+			task.removeDialog();
 			return true;
 		}
 		return false;

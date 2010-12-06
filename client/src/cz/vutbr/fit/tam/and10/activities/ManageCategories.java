@@ -21,6 +21,7 @@ import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.category.Category;
 import cz.vutbr.fit.tam.and10.category.CategoryAdapter;
+import cz.vutbr.fit.tam.and10.dialogs.AddCategoryDialog;
 
 public class ManageCategories extends Activity implements AccountInfoHolder {
 	
@@ -54,7 +55,7 @@ public class ManageCategories extends Activity implements AccountInfoHolder {
 	        ImageButton addTask = (ImageButton)view.findViewById(R.id.header_add);
 			addTask.setOnClickListener(new OnClickListener() {
 				public void onClick(View v) {
-					createCategory();
+					createCategoryDialog();
 				}
 			});
 	        
@@ -106,8 +107,12 @@ public class ManageCategories extends Activity implements AccountInfoHolder {
 		return false;
 	}
 	
-	public void createCategory() {
-		Toast.makeText(this, "create new category", Toast.LENGTH_SHORT).show();
+	public void createCategoryDialog() {
+		new AddCategoryDialog(this).show();
+	}
+	
+	public void createCategory(String text) {
+		Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
 	}
 	
 	private MainMenu menu;
