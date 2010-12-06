@@ -9,11 +9,11 @@ import android.net.NetworkInfo;
 /**
  * Global class which contains data, we want to share across the application.
  * 
- * getting in any activity: KDGlobal global = (KDGlobal) getApplication();
+ * getting in any activity: KeepDoinApplication global = (KeepDoinApplication) getApplication();
  * @author misa
  *
  */
-public class KDGlobal extends Application {
+public class KeepDoinApplication extends Application {
 
 	public String accountName;
 	public int accountId;

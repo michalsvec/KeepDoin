@@ -3,6 +3,7 @@ package cz.vutbr.fit.tam.and10;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -15,10 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import cz.vutbr.fit.tam.and10.activities.BaseActivity;
+import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 import cz.vutbr.fit.tam.and10.helpers.GameModel;
 
-public class KeepDoin extends BaseActivity {
+public class KeepDoin extends Activity implements AccountInfoHolder {
 	
 	public static final String PREFS_NAME = "KeepDoinPrefs";
 
@@ -26,7 +27,7 @@ public class KeepDoin extends BaseActivity {
     private TextView mMessage;
 
     private enum authTypes {AUTH_LOGIN, AUTH_REG};
-    private authTypes authType; 
+    private authTypes authType;
     private CharSequence dialogMsg;
 
     /** 
@@ -41,7 +42,8 @@ public class KeepDoin extends BaseActivity {
      */
     private Thread mAuthThread;
 
-
+	private String accountName;
+	private int accountId;
 
     private static String getGoogleAccount(AccountManager mgr) {
         String name = "";
@@ -124,7 +126,7 @@ public class KeepDoin extends BaseActivity {
         Log.i("KeepDoin", "handleLogin()");
         
         // gets global class
-        KDGlobal global = (KDGlobal) getApplication();
+        KeepDoinApplication global = (KeepDoinApplication) getApplication();
         if(!global.isNetworkAvailable()) {
         	Context context = getApplicationContext();
         	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
@@ -154,7 +156,7 @@ public class KeepDoin extends BaseActivity {
         Log.i("KeepDoin", "handleRegistration()");
         
         // gets global class
-        KDGlobal global = (KDGlobal) getApplication();
+        KeepDoinApplication global = (KeepDoinApplication) getApplication();
         if(!global.isNetworkAvailable()) {
         	Context context = getApplicationContext();
         	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
@@ -271,7 +273,7 @@ public class KeepDoin extends BaseActivity {
         Log.i("KeepDoin", "finishAuth()");
 
         // stores account informations to global storage
-        KDGlobal global = (KDGlobal) getApplication();
+        KeepDoinApplication global = (KeepDoinApplication) getApplication();
         global.accountId = this.accountId;
         global.accountName = this.accountName;
 
@@ -281,4 +283,24 @@ public class KeepDoin extends BaseActivity {
         Log.i("KeepDoin", "starting activity MainWindow");
         startActivity(intent);
     }
+    
+    @Override
+	public int getAccountId() {
+		return accountId;
+	}
+
+	@Override
+	public String getAccountName() {
+		return accountName;
+	}
+
+	@Override
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
+	}
+
+	@Override
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
 }

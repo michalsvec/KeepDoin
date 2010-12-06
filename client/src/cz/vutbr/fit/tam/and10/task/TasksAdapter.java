@@ -16,7 +16,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.category.Category;
 
 public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextMenuListener {
 

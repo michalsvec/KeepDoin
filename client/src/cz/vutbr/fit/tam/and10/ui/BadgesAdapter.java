@@ -1,13 +1,12 @@
 package cz.vutbr.fit.tam.and10.ui;
 
-import cz.vutbr.fit.tam.and10.R;
-import cz.vutbr.fit.tam.and10.R.drawable;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import cz.vutbr.fit.tam.and10.R;
 
 public class BadgesAdapter extends BaseAdapter {
 	private Context mContext;
