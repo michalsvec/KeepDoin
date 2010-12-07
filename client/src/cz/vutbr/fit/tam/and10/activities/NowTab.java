@@ -42,6 +42,7 @@ public class NowTab extends Activity implements AccountInfoHolder {
 		// END OF MOCKUP
         
         setContentView(tasks.getView());
+        registerForContextMenu(tasks.getListView());
     }
     
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
