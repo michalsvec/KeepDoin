@@ -43,6 +43,7 @@
     <string name="context_menu_move_up">Move up</string>
     <string name="context_menu_move_down">Move down</string>
     <string name="context_menu_remove">Remove</string>
+    <string name="context_menu_like">Like!</string>
 
     <!-- priorities -->
     <string name="priority_low">Low</string>

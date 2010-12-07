@@ -60,12 +60,10 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 		final Task t = getItem(position);
 		if (t != null) {
 			DecimalFormat df = new DecimalFormat("#,###,###,###");
+
+			((TextView)v.findViewById(R.id.task_name)).setText(t.getName());
 			
-			TextView name = (TextView)v.findViewById(R.id.task_name);
-			name.setText(t.getName());
-			
-			LinearLayout priority = (LinearLayout)v.findViewById(R.id.task_priority);
-			priority.setBackgroundResource(t.getPriority().getColor());
+			((LinearLayout)v.findViewById(R.id.task_priority)).setBackgroundResource(t.getPriority().getColor());
 			
 			TextView reward = (TextView)v.findViewById(R.id.task_reward);
 			if (previewOnly) {
@@ -77,8 +75,7 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 			
 			Date d = t.getDeadline();
 			if (d != null) {
-				TextView deadline = (TextView)v.findViewById(R.id.task_deadline);
-				deadline.setText(DateFormat.getDateInstance().format(d));
+				((TextView)v.findViewById(R.id.task_deadline)).setText(DateFormat.getDateInstance().format(d));
 			}
 			
 			TextView likes = (TextView)v.findViewById(R.id.task_likes);

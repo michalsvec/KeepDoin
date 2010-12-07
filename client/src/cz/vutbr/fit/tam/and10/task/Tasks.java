@@ -31,7 +31,6 @@ public class Tasks {
 	public Tasks(Activity a) {
 		activity = a;
 		adapter = new MergeAdapter();
-		a.registerForContextMenu(getListView());
 	}
 	
 	public Tasks(Activity a, Boolean previewOnly) {
@@ -54,6 +53,11 @@ public class Tasks {
 	public void addCategory(final Category c) {
 		LayoutInflater inflater = LayoutInflater.from(activity);
 		View v = inflater.inflate(R.layout.header, null);
+		
+		if (previewOnly) {
+			v.findViewById(R.id.header_separator).setVisibility(View.GONE);
+			v.findViewById(R.id.header_add).setVisibility(View.GONE);
+		}
 		
 		ImageButton addTask = (ImageButton)v.findViewById(R.id.header_add);
 		addTask.setOnClickListener(new OnClickListener() {
@@ -93,7 +97,11 @@ public class Tasks {
 	
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     	MenuInflater inflater = activity.getMenuInflater();
-        inflater.inflate(R.menu.task_context_menu, menu);
+        if (previewOnly) {
+        	inflater.inflate(R.menu.task_context_menu_preview, menu);
+        } else {
+        	inflater.inflate(R.menu.task_context_menu, menu);
+        }
 		menu.setHeaderTitle(R.string.context_menu_title);
 	}
 	
@@ -116,6 +124,9 @@ public class Tasks {
 			return true;
 		case R.id.context_menu_remove:
 			task.removeDialog();
+			return true;
+		case R.id.context_menu_like:
+			task.like();
 			return true;
 		}
 		return false;
