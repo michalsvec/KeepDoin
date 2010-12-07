@@ -1,6 +1,8 @@
 package cz.vutbr.fit.tam.and10.task;
 
 import java.security.InvalidParameterException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Random;
 
 import android.app.Activity;
@@ -44,11 +46,10 @@ public class Task {
 	protected int category;
 	protected int position;
 	
-	protected int year;
-	protected int month;
-	protected int day;
+	protected Date deadline;
 	
 	protected int currentReward;
+	protected int currentLikes;
 
 	protected Activity activity;
 	
@@ -95,13 +96,17 @@ public class Task {
 	public void remove() {
 		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
 	}
+	
+	public void like() {
+		Toast.makeText(activity, "like " + getName(), Toast.LENGTH_SHORT).show();
+	}
 
 	public void changeDeadlineDialog() {
-		new DateDialog(activity, this, year, month, day).show();
+		new DateDialog(activity, this, deadline).show();
 	}
 	
-	public void changeDeadline(int year, int month, int day) {
-		Toast.makeText(activity, "new deadline is " + String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day), Toast.LENGTH_SHORT).show();
+	public void changeDeadline(Date newDeadline) {
+		Toast.makeText(activity, "new deadline is " + DateFormat.getDateInstance().format(newDeadline), Toast.LENGTH_SHORT).show();
 	}
 
 	public void complete() {
@@ -121,6 +126,11 @@ public class Task {
 		return 10 * (new Random().nextInt(1000));
 	}
 	
+	public int getCurrentLikes() {
+		// TODO mockup
+		return (new Random().nextInt(20));
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -137,28 +147,16 @@ public class Task {
 		this.priority = priority;
 	}
 
-	public int getYear() {
-		return year;
+	public void setDeadline(Date deadline) {
+		this.deadline = deadline;
 	}
-
-	public void setYear(int year) {
-		this.year = year;
-	}
-
-	public int getMonth() {
-		return month;
-	}
-
-	public void setMonth(int month) {
-		this.month = month;
-	}
-
-	public int getDay() {
-		return day;
-	}
-
-	public void setDay(int day) {
-		this.day = day;
+	
+	public Date getDeadline() {
+		// TODO mockup
+		if (new Random().nextInt(10) >= 5) {
+			return null;
+		}
+		return new Date(111, new Random().nextInt(12), new Random().nextInt(28) + 1);
 	}
 	
 	public void setPosition(int position) {
@@ -167,5 +165,10 @@ public class Task {
 	
 	public int getPosition() {
 		return this.position;
+	}
+	
+	public Boolean isLikedByCurrentUser() {
+		// TODO mockup
+		return (new Random().nextInt(10) >= 5);
 	}
 }

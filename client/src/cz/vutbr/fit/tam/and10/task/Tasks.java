@@ -25,38 +25,30 @@ public class Tasks {
 	protected MergeAdapter adapter;
 	protected View view;
 	protected Activity activity;
+	
+	protected Boolean previewOnly = false;
 
 	public Tasks(Activity a) {
 		activity = a;
 		adapter = new MergeAdapter();
-		
-		// TODO MOCKUP
-		addCategory(new Category(a, "Práce"));
-		TasksAdapter t = new TasksAdapter(activity);
-		t.add(new Task(activity, "Zalít v práci kytičky", Task.Priority.HIGH));
-		t.add(new Task(activity, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
-		t.add(new Task(activity, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
-		adapter.addAdapter(t);
-		
-		addCategory(new Category(a, "Škola"));
-		t = new TasksAdapter(activity);
-		t.add(new Task(activity, "Zalít ve škole kytičky", Task.Priority.HIGH));
-		t.add(new Task(activity, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
-		t.add(new Task(activity, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
-		adapter.addAdapter(t);
-		
-		addCategory(new Category(a, "Doma"));
-		t = new TasksAdapter(activity);
-		t.add(new Task(activity, "Zalít doma kytičky", Task.Priority.HIGH));
-		t.add(new Task(activity, "Zavolat babičce a dědovi", Task.Priority.MEDIUM));
-		t.add(new Task(activity, "Koupit lístek na Karla Plíhala", Task.Priority.LOW));
-		adapter.addAdapter(t);
-		
 		a.registerForContextMenu(getListView());
 	}
 	
+	public Tasks(Activity a, Boolean previewOnly) {
+		this(a);
+		this.previewOnly = previewOnly;
+	}
+	
+	public void addTasks(Task[] tasks) {
+		TasksAdapter t = new TasksAdapter(activity, tasks);
+		t.setPreviewOnly(previewOnly);
+		adapter.addAdapter(t);
+	}
+	
 	public void addTasks(List<Task> tasks) {
-		adapter.addAdapter(new TasksAdapter(activity, tasks));
+		TasksAdapter t = new TasksAdapter(activity, tasks);
+		t.setPreviewOnly(previewOnly);
+		adapter.addAdapter(t);
 	}
 	
 	public void addCategory(final Category c) {

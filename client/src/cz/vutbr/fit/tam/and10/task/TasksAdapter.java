@@ -1,6 +1,8 @@
 package cz.vutbr.fit.tam.and10.task;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -19,7 +21,8 @@ import cz.vutbr.fit.tam.and10.R;
 
 public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextMenuListener {
 
-	protected Activity activity; 
+	protected Activity activity;
+	protected Boolean previewOnly = false;
 	
 	public TasksAdapter(Activity activity) {
 		super(activity, R.layout.task);
@@ -34,6 +37,10 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 	public TasksAdapter(Activity activity, Task[] tasks) {
 		super(activity, R.layout.task, tasks);
 		this.activity = activity;
+	}
+	
+	public void setPreviewOnly(Boolean previewOnly) {
+		this.previewOnly = previewOnly;
 	}
 	
 	@Override
@@ -52,6 +59,8 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 		
 		final Task t = getItem(position);
 		if (t != null) {
+			DecimalFormat df = new DecimalFormat("#,###,###,###");
+			
 			TextView name = (TextView)v.findViewById(R.id.task_name);
 			name.setText(t.getName());
 			
@@ -59,23 +68,53 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 			priority.setBackgroundResource(t.getPriority().getColor());
 			
 			TextView reward = (TextView)v.findViewById(R.id.task_reward);
-			DecimalFormat df = new DecimalFormat("#,###,###,###");
-			reward.setText(String.valueOf(df.format(t.getCurrentReward())));
+			if (previewOnly) {
+				reward.setVisibility(View.GONE);
+				((TextView)v.findViewById(R.id.task_reward_label)).setVisibility(View.GONE);
+			} else {
+				reward.setText(String.valueOf(df.format(t.getCurrentReward())));
+			}
 			
-	//		TextView likesCount = (TextView)v.findViewById(R.id.task_likes_count);
-	//		likesCount.setText("10");
+			Date d = t.getDeadline();
+			if (d != null) {
+				TextView deadline = (TextView)v.findViewById(R.id.task_deadline);
+				deadline.setText(DateFormat.getDateInstance().format(d));
+			}
+			
+			TextView likes = (TextView)v.findViewById(R.id.task_likes);
+			if (previewOnly) {
+				likes.setVisibility(View.GONE);
+				((TextView)v.findViewById(R.id.task_likes_label)).setVisibility(View.GONE);
+			} else {
+				likes.setText(String.valueOf(df.format(t.getCurrentLikes())));
+			}
+			
+			if (previewOnly) {
+				if (t.isLikedByCurrentUser()) {
+					((TextView)v.findViewById(R.id.task_like_this)).setVisibility(View.GONE);
+				} else {
+					((TextView)v.findViewById(R.id.task_liked)).setVisibility(View.GONE);
+				}
+			} else {
+				((TextView)v.findViewById(R.id.task_like_this)).setVisibility(View.GONE);
+				((TextView)v.findViewById(R.id.task_liked)).setVisibility(View.GONE);
+			}
 			
 			CheckBox complete = (CheckBox) v.findViewById(R.id.task_complete);
-			complete.setOnClickListener(new OnClickListener() {
-				public void onClick(View v) {
-					CheckBox checkbox = (CheckBox)v;
-					if (checkbox.isChecked()) {
-						t.complete();
-					} else {
-						t.uncomplete();
+			if (previewOnly) {
+				complete.setVisibility(View.GONE);
+			} else {
+				complete.setOnClickListener(new OnClickListener() {
+					public void onClick(View v) {
+						CheckBox checkbox = (CheckBox)v;
+						if (checkbox.isChecked()) {
+							t.complete();
+						} else {
+							t.uncomplete();
+						}
 					}
+				});
 				}
-			});
 			
 			v.setOnCreateContextMenuListener(this);
 			v.setTag(t);

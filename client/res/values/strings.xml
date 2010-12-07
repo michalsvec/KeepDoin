@@ -17,6 +17,9 @@
 
     <!-- tasks -->
     <string name="tasks_reward_label">REWARD:</string>
+    <string name="tasks_likes_label">LIKES:</string>
+    <string name="tasks_liked">LIKED!</string>
+    <string name="tasks_like_this">Like this!</string>
     
     <!-- dialogs -->
     <string name="dialog_ok">OK</string>

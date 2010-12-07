@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.category.Category;
+import cz.vutbr.fit.tam.and10.task.Task;
 import cz.vutbr.fit.tam.and10.task.Tasks;
 
 public class NowTab extends Activity implements AccountInfoHolder {
@@ -20,7 +22,25 @@ public class NowTab extends Activity implements AccountInfoHolder {
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        tasks = new Tasks(this);
+        tasks = new Tasks(this); // TODO TEST OF "INTERACTIVE VERSION" OF TASKS
+        
+        // TODO MOCKUP
+        tasks.addCategory(new Category(this, "Práce"));
+        Task[] items1 = {
+        	new Task(this, "Zalít kytičky", Task.Priority.HIGH),
+        	new Task(this, "Zavolat babičce a dědovi", Task.Priority.MEDIUM),
+        	new Task(this, "Koupit lístek na Karla Plíhala", Task.Priority.LOW)
+        };
+        tasks.addTasks(items1);
+        
+        tasks.addCategory(new Category(this, "Škola"));
+        Task[] items2 = {
+        	new Task(this, "Nakrmit paní učitelku", Task.Priority.HIGH),
+        	new Task(this, "Naučit se TAM", Task.Priority.LOW)
+        };
+        tasks.addTasks(items2);
+		// END OF MOCKUP
+        
         setContentView(tasks.getView());
     }
     

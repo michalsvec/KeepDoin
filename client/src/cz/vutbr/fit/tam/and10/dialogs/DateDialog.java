@@ -1,6 +1,7 @@
 package cz.vutbr.fit.tam.and10.dialogs;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -16,47 +17,36 @@ public class DateDialog {
 	protected DatePickerDialog dialog;
 	protected Task task;
 
-	public DateDialog(Activity activity, Task task) {
+	public DateDialog(Activity activity, Task task, Date defaultDate) {
 		this.activity = activity;
 		this.task = task;
-		init(activity, task);
-		dialog.setTitle(R.string.dialog_pick_date);
-	}
-	
-	public DateDialog(Activity activity, Task task, int defaultYear, int defaultMonth, int defaultDay) {
-		this.activity = activity;
-		this.task = task;
-		init(activity, task, defaultYear, defaultMonth, defaultDay);
-		dialog.setTitle(R.string.dialog_pick_date);
-	}
-	
-	protected void init(Activity activity, Task task) {
-		final Calendar c = Calendar.getInstance();
-		int defaultDay = c.get(Calendar.DAY_OF_MONTH);
-		int defaultMonth = c.get(Calendar.MONTH);
-		int defaultYear = c.get(Calendar.YEAR);
+		
+		int defaultDay;
+		int defaultMonth;
+		int defaultYear;
+		
+		if (defaultDate == null) {
+			final Calendar c = Calendar.getInstance();
+			defaultDay = c.get(Calendar.DAY_OF_MONTH);
+			defaultMonth = c.get(Calendar.MONTH);
+			defaultYear = c.get(Calendar.YEAR);
+		} else {
+			defaultDay = defaultDate.getDay();
+			defaultMonth = defaultDate.getMonth();
+			defaultYear = defaultDate.getYear() + 1900;
+		}
 		
 		dialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int month, int day) {
                 processValue(year, month, day);
             }
         }, defaultYear, defaultMonth, defaultDay);
+		
+		dialog.setTitle(R.string.dialog_pick_date);
 	}
 	
-	protected void init(Activity activity, Task task, int defaultYear, int defaultMonth, int defaultDay) {
-		if (defaultDay == 0 || defaultMonth == 0 || defaultYear == 0) {
-			init(activity, task);
-		} else {
-			dialog = new DatePickerDialog(activity, new DatePickerDialog.OnDateSetListener() {
-	            public void onDateSet(DatePicker view, int year, int month, int day) {
-	                processValue(year, month, day);
-	            }
-	        }, defaultYear, defaultMonth, defaultDay);
-		}
-	}
-
 	protected void processValue(int year, int month, int day) {
-		task.changeDeadline(year, month, day);
+		task.changeDeadline(new Date(year - 1900, month, day));
 	}
 	
 	public void show() {
