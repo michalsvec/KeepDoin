@@ -65,15 +65,6 @@ public class Synchronization {
 
 			// friends table truncate
 			this.db.truncateTable("friends");
-			Cursor cur = db.db.rawQuery("SELECT name FROM sqlite_master ORDER BY name", new String [] {});
-
-			cur.moveToFirst();
-			while (cur.isAfterLast() == false) {
-				Log.i("KeepDoin", "tabulka:"+cur.getString(cur.getColumnIndex("name")));
-				cur.moveToNext();
-			}
-			cur.close();
-
 
 			if(friendsList != null) {
 				friendsArray = friendsList.getJSONArray("friendsanduser");

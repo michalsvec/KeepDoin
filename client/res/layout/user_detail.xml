@@ -36,14 +36,15 @@
 	</LinearLayout>
 	 
 	<!-- nejaky zobrazeni uloh -->
-	<TextView
-      android:text="zobrazeni uloh:\n----------------------\nBadges:"
+<!--
+ 	<TextView
+      android:text="zobrazeni uloh:\nBadges:"
       android:orientation="horizontal"
       android:layout_width="fill_parent"
       android:layout_height="wrap_content">
 	</TextView>
 
-	<!-- badges -->
+	
 	<GridView
       android:id="@+id/badges"
     android:layout_width="fill_parent" 
@@ -55,4 +56,5 @@
     android:stretchMode="columnWidth"
     android:gravity="center">
 	</GridView>
+ -->
 </LinearLayout>

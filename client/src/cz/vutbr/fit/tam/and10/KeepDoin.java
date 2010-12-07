@@ -1,6 +1,8 @@
 package cz.vutbr.fit.tam.and10;
 
 
+import java.io.IOException;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 import cz.vutbr.fit.tam.and10.helpers.GameModel;
+import cz.vutbr.fit.tam.and10.helpers.SQLDriver;
 
 public class KeepDoin extends Activity implements AccountInfoHolder {
 	
@@ -45,7 +48,7 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
 	private String accountName;
 	private int accountId;
 
-    private static String getGoogleAccount(AccountManager mgr) {
+	private static String getGoogleAccount(AccountManager mgr) {
         String name = "";
 
         Account[] accts = mgr.getAccounts(); 
@@ -98,6 +101,8 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
             	this.accountId = settings.getInt("accountId", 0);
             	
             	finishAuth();
+            	// dokonceni autorizace a spusteni aplikace
+            	// ahoj
             }
             // neprihlasen (prvni prhlaseni, nebo smazani preferences) 
             // nabidne se registrace, nebo login
@@ -278,6 +283,15 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
         global.accountName = this.accountName;
 
 
+        // database check, one two, one two, check check!!!
+        try {
+			SQLDriver db = new SQLDriver(this);
+			db.checkSchema();
+			db.closeDB();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
         startApp();
     }
     

@@ -31,8 +31,8 @@ public class MeTab extends Activity implements AccountInfoHolder {
         // nastaveni layoutu pro friendy
         setContentView(R.layout.user_detail);
 
-        GridView gridview = (GridView) findViewById(R.id.badges);
-        gridview.setAdapter(new BadgesAdapter(this, 6));
+//        GridView gridview = (GridView) findViewById(R.id.badges);
+//        gridview.setAdapter(new BadgesAdapter(this, 6));
         
         // nacteni informaci o uzivateli
         User user = new User(userId);

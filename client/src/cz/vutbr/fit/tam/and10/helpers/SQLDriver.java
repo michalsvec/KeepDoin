@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +35,8 @@ public class SQLDriver extends SQLiteOpenHelper {
 	private String DB_PATH = null;
 	private static String DB_NAME = "keepdoindb";
 	private final Context myContext;
+ 
+	Hashtable<String, String> tables; 
 
 	public SQLDriver(Context context) throws IOException {
 		super(context, DB_NAME, null, 1);
@@ -52,11 +56,11 @@ public class SQLDriver extends SQLiteOpenHelper {
 		this.openDataBase();
 		
 		
-		// log files list
-		String list[] = myContext.fileList();
-		for(int i=0; i < list.length ; i++ ) {
-			Log.i("KeepDoin", "file list: "+ list[i]);
-		}
+//		// log files list
+//		String list[] = myContext.fileList();
+//		for(int i=0; i < list.length ; i++ ) {
+//			Log.i("KeepDoin", "file list: "+ list[i]);
+//		}
 	}
 
 
@@ -258,14 +262,69 @@ public class SQLDriver extends SQLiteOpenHelper {
 		String query = "DELETE FROM "+table+";";
 		this.execSQL(query);
 	}
-	
-	
+
+
+
 	public void closeDB() {
 		Log.i("KeepDoin", "closeDB()");
 		
 		if(db != null) {
 			Log.i("KeepDoin", "closing database");
 			db.close();
+		}
+	}
+
+
+
+	public void checkSchema() {
+		Log.i("KeepDoin", "checkSchema()");
+		
+		tables = new Hashtable<String, String>();
+		tables.put(
+				"friends", 
+				"CREATE TABLE friends (email TEXT, name TEXT, id INTEGER PRIMARY KEY)"
+			); 
+		
+		
+		Cursor cur = db.rawQuery("SELECT * FROM sqlite_master ORDER BY name", new String [] {});
+
+		// iteration over all tables and check if the schema is correct 
+		cur.moveToFirst();
+		while (cur.isAfterLast() == false) {
+			String table = cur.getString(cur.getColumnIndex("tbl_name"));
+			Log.i("KeepDoin", "tabulka:"+table);
+
+			// this excludes metadata tables etc. Just tables we need
+			if(((String) tables.get(table)) != null) {
+				String sql   = cur.getString(cur.getColumnIndex("sql"));
+				Log.i("KeepDoin", "tabulka: "+table+" - "+sql);
+				
+				Log.i("KeepDoin", sql+"\n"+table);
+				
+				if(!sql.equalsIgnoreCase((String) tables.get(table))) {
+					execSQL("DROP TABLE "+table+";"+sql);
+				}
+				
+			}
+			// table schema is okay, do nothing
+			else {
+				Log.i("KeepDoin", "tabulka: "+table+" - SKIP");
+			}
+
+			// removing from hashmap 
+			// tables which stays in hashmap doesnt exists, so we have to create them  
+			tables.remove(table);
+
+			
+			cur.moveToNext();
+		}
+		cur.close();
+		
+		for (Map.Entry<String, String> entry : tables.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			Log.i("KeepDoin", "new table: "+key);
+			execSQL(value);
 		}
 	}
 }
