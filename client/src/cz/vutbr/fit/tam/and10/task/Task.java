@@ -6,6 +6,9 @@ import java.util.Random;
 import android.app.Activity;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.R;
+import cz.vutbr.fit.tam.and10.category.Category;
+import cz.vutbr.fit.tam.and10.dialogs.ChangeCategoryDialog;
+import cz.vutbr.fit.tam.and10.dialogs.ChangePriorityDialog;
 import cz.vutbr.fit.tam.and10.dialogs.ChangeTaskTextDialog;
 import cz.vutbr.fit.tam.and10.dialogs.DateDialog;
 import cz.vutbr.fit.tam.and10.dialogs.RemoveTaskDialog;
@@ -14,7 +17,7 @@ import cz.vutbr.fit.tam.and10.dialogs.TextDialog;
 public class Task {
 
 	public enum Priority {
-		LOW(1), MEDIUM(2), HIGH(3);
+		LOW(0), MEDIUM(1), HIGH(2);
 	
 		private int value;
 		
@@ -24,11 +27,11 @@ public class Task {
 		
 		public int getColor() {
 			switch (this.value) {
-			case 1:
+			case 0:
 				return R.color.task_priority_low;
-			case 2:
+			case 1:
 				return R.color.task_priority_medium;
-			case 3:
+			case 2:
 				return R.color.task_priority_high;
 			default:
 				throw new InvalidParameterException("Unknown value for Priority enum.");
@@ -70,19 +73,19 @@ public class Task {
 	}
 	
 	public void changePriorityDialog() {
-		
+		new ChangePriorityDialog(activity, this).show();
 	}
 	
-	public void changePriority() {
-		Toast.makeText(activity, "change priority of " + getName(), Toast.LENGTH_SHORT).show();
+	public void changePriority(int priority) {
+		Toast.makeText(activity, "change priority to " + Priority.values()[priority], Toast.LENGTH_SHORT).show();
 	}
 	
 	public void changeCategoryDialog() {
-		
+		new ChangeCategoryDialog(activity, this).show();
 	}
 	
-	public void changeCategory() {
-		Toast.makeText(activity, "change category of " + getName(), Toast.LENGTH_SHORT).show();
+	public void changeCategory(Category newCategory) {
+		Toast.makeText(activity, "change category to " + newCategory.getName(), Toast.LENGTH_SHORT).show();
 	}
 	
 	public void removeDialog() {

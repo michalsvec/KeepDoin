@@ -28,6 +28,8 @@
     <string name="dialog_remove_category_title">Really remove this category?</string>
     <string name="dialog_remove_task_title">Really remove this task?</string>
     <string name="dialog_pick_date">Pick a deadline</string>
+    <string name="dialog_change_priority">Change priority</string>
+    <string name="dialog_change_category">Change category</string>
 
     <!-- task & category context menu -->
     <string name="context_menu_title">Menu</string>
@@ -38,6 +40,11 @@
     <string name="context_menu_move_up">Move up</string>
     <string name="context_menu_move_down">Move down</string>
     <string name="context_menu_remove">Remove</string>
+
+    <!-- priorities -->
+    <string name="priority_low">Low</string>
+    <string name="priority_medium">Medium</string>
+    <string name="priority_high">High</string>
 
     <!-- category -->
     <string name="categories_header">Categories</string>
