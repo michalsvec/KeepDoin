@@ -44,7 +44,9 @@ public class Task {
 	protected String name;
 	protected Priority priority;
 	protected int categoryId;
+	protected int position;
 	protected Date deadline;
+	protected boolean done;
 	
 	protected int currentReward;
 	protected int currentLikes;
@@ -108,11 +110,13 @@ public class Task {
 	}
 
 	public void complete() {
-		Toast.makeText(activity, "complete " + getName(), Toast.LENGTH_SHORT).show();
+		this.done = true;
+		Toast.makeText(activity, getName() + " completed.", Toast.LENGTH_SHORT).show();
 	}
 	
 	public void uncomplete() {
-		Toast.makeText(activity, "uncomplete " + getName(), Toast.LENGTH_SHORT).show();
+		this.done = false;
+		Toast.makeText(activity, getName() + " uncompleted.", Toast.LENGTH_SHORT).show();
 	}
 	
 	
@@ -163,6 +167,14 @@ public class Task {
 			return null;
 		}
 		return new Date(111, new Random().nextInt(12), new Random().nextInt(28) + 1);
+	}
+	
+	public void setPosition(int position) {
+		this.position = position;
+	}
+	
+	public int getPosition() {
+		return this.position;
 	}
 	
 	public Boolean isLikedByCurrentUser() {
