@@ -1,9 +1,11 @@
 package cz.vutbr.fit.tam.and10.category;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.util.Log;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.dialogs.AddTaskDialog;
 import cz.vutbr.fit.tam.and10.dialogs.ChangeCategoryTextDialog;
@@ -34,7 +36,13 @@ public class Category {
 	public void createTask(String text) {
 		Task task = new Task(activity, text, Task.Priority.MEDIUM);
 		task.setCategoryId(id);
-		new SQLDriver(activity).saveTask(task);
+
+		try {
+			new SQLDriver(activity).saveTask(task);
+		} catch (IOException e) {
+			Toast.makeText(activity, "Unable to save new task.", Toast.LENGTH_SHORT).show();
+			Log.e("KeepDoin", "SaveTask()", e);
+		}
 	}
 	
 	public void changeTextDialog() {

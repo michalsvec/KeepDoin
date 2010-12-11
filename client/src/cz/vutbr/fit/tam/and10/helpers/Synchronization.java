@@ -60,6 +60,7 @@ public class Synchronization {
         		friendsList = model.getApiResult(global.accountId, "friendsanduser");
         	} catch(ClientProtocolException e) {
         		Toast.makeText(mContext, "Friends synchronization failed with 404. Try again later", Toast.LENGTH_LONG).show();
+        		Log.e("KeepDoin", "synchronizeFriendsAndUser()", e);
         		return;
         	}
 

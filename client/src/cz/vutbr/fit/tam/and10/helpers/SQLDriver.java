@@ -6,11 +6,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -20,6 +22,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.FriendsTab;
+import cz.vutbr.fit.tam.and10.category.Category;
+import cz.vutbr.fit.tam.and10.task.Task;
 
 /**
  * @link: 
@@ -35,6 +39,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 	private String DB_PATH = null;
 	private static String DB_NAME = "keepdoindb";
 	private final Context myContext;
+	private KeepDoinApplication global = null; 
  
 	Hashtable<String, String> tables; 
 
@@ -42,6 +47,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 		super(context, DB_NAME, null, 1);
 		Log.i("KeepDoin", "SQLDriver()");
 		this.myContext = context;
+
 
 		DB_PATH = "/data/data/"+context.getApplicationContext().getPackageName()+"/databases/";
 
@@ -190,7 +196,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 			int id = user.getInt("id");
 			String name = user.getString("name");
 			String email = user.getString("email");
-			String query = "INSERT INTO friends (id, name, email) VALUES ('"+id+"', '"+name+"', '"+email+"');";
+			String query = "INSERT INTO users (id, name, email) VALUES ('"+id+"', '"+name+"', '"+email+"');";
 			this.execSQL(query);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -206,12 +212,13 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 	public ArrayList<User> getFriends() {
 		Log.i("KeepDoin", "getFriends()");
-		KeepDoinApplication global = (KeepDoinApplication) ((FriendsTab) myContext).getApplication();
-
+		
+		this.global = (KeepDoinApplication) ((FriendsTab) myContext).getApplication();
+		
 		ArrayList<User> friends = new ArrayList<User>();
 		Cursor cur = null;
 
-		cur = db.rawQuery("SELECT * FROM friends", new String [] {});
+		cur = db.rawQuery("SELECT * FROM users", new String [] {});
 
 		cur.moveToFirst();
 		Log.i("KeepDoin", "accoutnId: "+global.accountId);
@@ -241,7 +248,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 		Log.i("KeepDoin", "getUser()");
 
 		User user = null;
-		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
+		Cursor cur = db.rawQuery("SELECT * FROM users WHERE id="+id, new String [] {});
 		
 		if(cur.getCount() == 0)
 			return null;
@@ -282,10 +289,13 @@ public class SQLDriver extends SQLiteOpenHelper {
 		Log.i("KeepDoin", "checkSchema()");
 		
 		tables = new Hashtable<String, String>();
-		tables.put(
-				"friends", 
-				"CREATE TABLE friends (email TEXT, name TEXT, id INTEGER PRIMARY KEY)"
-			); 
+		tables.put("users", 
+				"CREATE TABLE users (email TEXT, name TEXT, id INTEGER PRIMARY KEY)"); 
+		tables.put("tasks", 
+				"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT, category_id NUMERIC, is_done NUMERIC, priority_id BLOB, deadline TEXT, current_reward_cache NUMERIC)");
+		tables.put("categories",
+				"CREATE TABLE categories (id INTEGER PRIMARY KEY, user_id NUMERIC, name NUMERIC, priority NUMERIC)");
+		
 		
 		
 		Cursor cur = db.rawQuery("SELECT * FROM sqlite_master ORDER BY name", new String [] {});
@@ -331,5 +341,74 @@ public class SQLDriver extends SQLiteOpenHelper {
 			Log.i("KeepDoin", "new table: "+key);
 			execSQL(value);
 		}
+	}
+
+
+
+	/**
+	 * Loads all categories with tasks
+	 * @param userId
+	 * @return List<Category> list of categories
+	 */
+	public List<Category> getUserCategories(int userId) {
+		Log.i("KeepDoin", "getUserCategories()");
+
+		ArrayList<Category> categories = new ArrayList<Category>();
+		Cursor cur = null;
+		
+		cur = db.rawQuery("SELECT * FROM categories WHERE user_id = "+userId+" ORDER BY priority ASC", new String [] {});
+
+		cur.moveToFirst();
+		while (cur.isAfterLast() == false) {
+			Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+
+			Category category = new Category((Activity) myContext, cur.getString(cur.getColumnIndex("name")));
+			
+			// loads all tasks in category
+			Cursor taskCur = null;
+			taskCur = db.rawQuery("SELECT * FROM tasks WHERE category_id = "+cur.getInt(cur.getColumnIndex("id"))+" ORDER BY priority_id ASC", new String [] {});
+			taskCur.moveToFirst();
+			while (taskCur.isAfterLast() == false) {
+				Task task = new Task(
+						(Activity) myContext,
+						cur.getString(cur.getColumnIndex("name")),
+						Task.Priority.values()[cur.getInt(cur.getColumnIndex("priority_id"))]);
+				//task.setDeadline(new Date(cur.getColumnIndex("date")))
+				//String date = taskCur.getString(cur.getColumnIndex("date"));
+				//String[] tokens = date.split("-");
+				
+				//Date d = new Date
+				
+				category.addTask(task);
+			}
+
+			categories.add(category);
+			cur.moveToNext();
+		}
+		cur.close();
+		return categories;
+	}
+
+
+
+	/**
+	 * Save new task and returns id
+	 * @param Task task
+	 * @return int id
+	 */
+	public int saveTask(Task task) {
+		Log.i("KeepDoin", "saveTask()");
+
+		String query = "INSERT INTO tasks (name, category_id, is_done) VALUES ('"+
+			task.getName()+"', '"+
+			task.getCategoryId()+"', '"+
+			task.getIsDone()+"');";
+
+		this.execSQL(query);
+		Cursor cur= db.rawQuery("SELECT last_insert_rowid();", new String [] {});
+		cur.moveToFirst();
+		int id = cur.getInt(0);
+		
+		return id;
 	}
 }
