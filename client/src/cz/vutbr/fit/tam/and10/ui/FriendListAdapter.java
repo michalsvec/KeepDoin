@@ -43,13 +43,17 @@ public class FriendListAdapter extends BaseAdapter {
     public void refreshFriends() throws IOException {
     	SQLDriver sql = new SQLDriver(mContext);
     	this.friends = sql.getFriends();
+
+    	for(int i=0; i < this.friends.size(); i++ ) {
+			Log.i("KeepDoin", "friend: "+ this.friends.get(i).getName());
+		}
     	sql.closeDB();
     }
     
     
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-    	Log.i("KeepDoin", "getView()");
+    	Log.i("KeepDoin", "getView("+position+")");
         View view;
 
         if (convertView == null) {  // if it's not recycled, initialize some attributes

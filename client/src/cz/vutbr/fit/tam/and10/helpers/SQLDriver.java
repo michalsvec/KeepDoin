@@ -310,18 +310,16 @@ public class SQLDriver extends SQLiteOpenHelper {
 			if(((String) tables.get(table)) != null) {
 				String sql   = cur.getString(cur.getColumnIndex("sql"));
 				Log.i("KeepDoin", "tabulka: "+table+" - "+sql);
-				
-				Log.i("KeepDoin", sql+"\n"+table);
-				
 
 				
+
 				if(!sql.equalsIgnoreCase((String) tables.get(table))) {
+					Log.i("KeepDoin", sql+"\nvs. "+tables.get(table));
 					execSQL("DROP TABLE "+table+";"+sql);
 				}
-				
+
 				// TODO FIXME: mazani dat z tabulek pro debugovani synchronizace
 				//truncateTable(table);
-				
 			}
 			// table schema is okay, do nothing
 			else {
@@ -332,7 +330,6 @@ public class SQLDriver extends SQLiteOpenHelper {
 			// tables which stays in hashmap doesnt exists, so we have to create them  
 			tables.remove(table);
 
-			
 			cur.moveToNext();
 		}
 		cur.close();
