@@ -411,4 +411,25 @@ public class SQLDriver extends SQLiteOpenHelper {
 		
 		return id;
 	}
+
+
+
+	/**
+	 * Save new category and returns id
+	 * @param Category category
+	 * @return int id
+	 */
+	public int saveCategory(Category category) {
+		Log.i("KeepDoin", "saveCategory()");
+
+		String query = "INSERT INTO categories (user_id, name, priority) VALUES (1, '"+
+			category.getName()+"', 1);";
+
+		this.execSQL(query);
+		Cursor cur= db.rawQuery("SELECT last_insert_rowid();", new String [] {});
+		cur.moveToFirst();
+		int id = cur.getInt(0);
+
+		return id;
+	}
 }
