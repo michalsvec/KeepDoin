@@ -43,9 +43,7 @@ public class Task {
 	
 	protected String name;
 	protected Priority priority;
-	protected int category;
-	protected int position;
-	
+	protected int categoryId;
 	protected Date deadline;
 	
 	protected int currentReward;
@@ -146,6 +144,14 @@ public class Task {
 	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
+	
+	public int getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
 
 	public void setDeadline(Date deadline) {
 		this.deadline = deadline;
@@ -157,14 +163,6 @@ public class Task {
 			return null;
 		}
 		return new Date(111, new Random().nextInt(12), new Random().nextInt(28) + 1);
-	}
-	
-	public void setPosition(int position) {
-		this.position = position;
-	}
-	
-	public int getPosition() {
-		return this.position;
 	}
 	
 	public Boolean isLikedByCurrentUser() {

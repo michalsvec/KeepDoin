@@ -9,11 +9,14 @@ import cz.vutbr.fit.tam.and10.dialogs.AddTaskDialog;
 import cz.vutbr.fit.tam.and10.dialogs.ChangeCategoryTextDialog;
 import cz.vutbr.fit.tam.and10.dialogs.RemoveCategoryDialog;
 import cz.vutbr.fit.tam.and10.dialogs.TextDialog;
+import cz.vutbr.fit.tam.and10.helpers.SQLDriver;
 import cz.vutbr.fit.tam.and10.task.Task;
 
 public class Category {
 
 	protected Activity activity;
+	
+	protected int id;
 	
 	protected String name;
 	protected int order;
@@ -29,7 +32,9 @@ public class Category {
 	}
 	
 	public void createTask(String text) {
-		Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+		Task task = new Task(activity, text, Task.Priority.MEDIUM);
+		task.setCategoryId(id);
+		new SQLDriver(activity).saveTask(task);
 	}
 	
 	public void changeTextDialog() {
@@ -64,6 +69,14 @@ public class Category {
 	
 	public void remove() {
 		Toast.makeText(activity, "remove " + getName(), Toast.LENGTH_SHORT).show();
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public String getName() {
