@@ -1,7 +1,7 @@
 package cz.vutbr.fit.tam.and10.category;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.app.Activity;
@@ -13,6 +13,7 @@ import cz.vutbr.fit.tam.and10.dialogs.RemoveCategoryDialog;
 import cz.vutbr.fit.tam.and10.dialogs.TextDialog;
 import cz.vutbr.fit.tam.and10.helpers.SQLDriver;
 import cz.vutbr.fit.tam.and10.task.Task;
+import cz.vutbr.fit.tam.and10.task.TasksAdapter;
 
 public class Category {
 
@@ -22,11 +23,15 @@ public class Category {
 	
 	protected String name;
 	protected int order;
-	protected List<Task> tasks = new ArrayList<Task>();
+	protected TasksAdapter adapter;
 
 	public Category(Activity a, String name) {
 		this.activity = a;
 		this.name = name;
+	}
+	
+	public void setAdapter(TasksAdapter adapter) {
+		this.adapter = adapter;
 	}
 	
 	public void createTaskDialog() {
@@ -36,9 +41,10 @@ public class Category {
 	public void createTask(String text) {
 		Task task = new Task(activity, text, Task.Priority.MEDIUM);
 		task.setCategoryId(id);
-
 		try {
-			new SQLDriver(activity).saveTask(task);
+			int id = new SQLDriver(activity).saveTask(task);
+			task.setId(id);
+			addTask(task);
 		} catch (IOException e) {
 			Toast.makeText(activity, "Unable to save new task.", Toast.LENGTH_SHORT).show();
 			Log.e("KeepDoin", "SaveTask()", e);
@@ -52,11 +58,26 @@ public class Category {
 	}
 	
 	public void addTasks(List<Task> tasks) {
-		this.tasks.addAll(tasks);
+		if (adapter != null) {
+			for (Iterator<Task> iterator = tasks.iterator(); iterator.hasNext();) {
+				adapter.add((Task)iterator.next());
+			}
+		}
+		adapter.notifyDataSetChanged();
+	}
+	
+	public void addTasks(Task[] tasks) {
+		if (adapter != null) {
+			for (int i = 0; i < tasks.length; i++) {
+				adapter.add(tasks[i]);
+			}
+		}
+		adapter.notifyDataSetChanged();
 	}
 	
 	public void addTask(Task task) {
-		this.tasks.add(task);
+		adapter.add(task);
+		adapter.notifyDataSetChanged();
 	}
 	
 	public void changeText(String text) {
@@ -97,9 +118,5 @@ public class Category {
 
 	public String toString() {
 		return getName();
-	}
-	
-	public List<Task> getTasks() {
-		return tasks;
 	}
 }

@@ -47,6 +47,7 @@ public class Task {
 	protected int position;
 	protected Date deadline;
 	protected boolean done;
+	protected int id;
 	
 	protected int currentReward;
 	protected int currentLikes;
@@ -175,6 +176,14 @@ public class Task {
 	
 	public int getPosition() {
 		return this.position;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	public Boolean isLikedByCurrentUser() {

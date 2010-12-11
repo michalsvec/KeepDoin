@@ -38,16 +38,18 @@ public class Tasks {
 		this.previewOnly = previewOnly;
 	}
 	
-	public void addTasks(Task[] tasks) {
+	public TasksAdapter addTasks(Task[] tasks) {
 		TasksAdapter t = new TasksAdapter(activity, tasks);
 		t.setPreviewOnly(previewOnly);
 		adapter.addAdapter(t);
+		return t;
 	}
 	
-	public void addTasks(List<Task> tasks) {
+	public TasksAdapter addTasks(List<Task> tasks) {
 		TasksAdapter t = new TasksAdapter(activity, tasks);
 		t.setPreviewOnly(previewOnly);
 		adapter.addAdapter(t);
+		return t;
 	}
 	
 	public void addCategory(final Category c) {
@@ -70,6 +72,16 @@ public class Tasks {
 		n.setText(c.getName());
 		
 		adapter.addView(v);
+	}
+	
+	public void addCategory(Category c, Task[] tasks) {
+		addCategory(c);
+		c.setAdapter(addTasks(tasks));
+	}
+	
+	public void addCategory(Category c, List<Task> tasks) {
+		addCategory(c);
+		c.setAdapter(addTasks(tasks));
 	}
 	
 	public View getView() {
