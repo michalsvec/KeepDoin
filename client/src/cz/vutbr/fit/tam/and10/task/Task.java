@@ -169,4 +169,11 @@ public class Task {
 		// TODO mockup
 		return (new Random().nextInt(10) >= 5);
 	}
+
+
+
+	public boolean getIsDone() {
+		// TODO: fix
+		return true;
+	}
 }
