@@ -43,12 +43,12 @@ public class Category {
 		task.setCategoryId(id);
 		try {
 			int id = new SQLDriver(activity).saveTask(task);
+			task.setId(id);
+			addTask(task);
 		} catch (IOException e) {
 			Toast.makeText(activity, "Unable to save new task.", Toast.LENGTH_SHORT).show();
 			Log.e("KeepDoin", "SaveTask()", e);
 		}
-		task.setId(id);
-		addTask(task);
 	}
 	
 	public void changeTextDialog() {

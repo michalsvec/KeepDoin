@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.widget.Adapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,14 +38,14 @@ public class Tasks {
 		this.previewOnly = previewOnly;
 	}
 	
-	public Adapter addTasks(Task[] tasks) {
+	public TasksAdapter addTasks(Task[] tasks) {
 		TasksAdapter t = new TasksAdapter(activity, tasks);
 		t.setPreviewOnly(previewOnly);
 		adapter.addAdapter(t);
 		return t;
 	}
 	
-	public Adapter addTasks(List<Task> tasks) {
+	public TasksAdapter addTasks(List<Task> tasks) {
 		TasksAdapter t = new TasksAdapter(activity, tasks);
 		t.setPreviewOnly(previewOnly);
 		adapter.addAdapter(t);
