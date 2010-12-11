@@ -268,6 +268,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 
 	public void truncateTable(String table) {
+		Log.i("KeepDoin", "Truncate table:"+table);
 		String query = "DELETE FROM "+table+";";
 		this.execSQL(query);
 	}
@@ -295,8 +296,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 				"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT, category_id NUMERIC, is_done NUMERIC, priority_id BLOB, deadline TEXT, current_reward_cache NUMERIC)");
 		tables.put("categories",
 				"CREATE TABLE categories (id INTEGER PRIMARY KEY, user_id NUMERIC, name NUMERIC, priority NUMERIC)");
-		
-		
+
 		
 		Cursor cur = db.rawQuery("SELECT * FROM sqlite_master ORDER BY name", new String [] {});
 
@@ -312,6 +312,8 @@ public class SQLDriver extends SQLiteOpenHelper {
 				Log.i("KeepDoin", "tabulka: "+table+" - "+sql);
 				
 				Log.i("KeepDoin", sql+"\n"+table);
+				
+
 				
 				if(!sql.equalsIgnoreCase((String) tables.get(table))) {
 					execSQL("DROP TABLE "+table+";"+sql);

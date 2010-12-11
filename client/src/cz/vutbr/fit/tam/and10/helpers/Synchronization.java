@@ -18,11 +18,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.database.Cursor;
 import android.util.Log;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
+import cz.vutbr.fit.tam.and10.activities.FriendsTab;
 
 public class Synchronization {
 
@@ -65,7 +65,7 @@ public class Synchronization {
         	}
 
 			// friends table truncate
-			this.db.truncateTable("friends");
+			this.db.truncateTable("users");
 
 			if(friendsList != null) {
 				friendsArray = friendsList.getJSONArray("friendsanduser");
@@ -136,11 +136,18 @@ public class Synchronization {
 
 
 
-	public void synchronize() {
+	public void synchronize() throws IOException {
 		KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
 		((AccountInfoHolder)mContext).setAccountId(global.accountId);
 		synchronizeFriendsAndUser();
 
 		db.closeDB();
+		
+		FriendsTab friends = (FriendsTab) global.manager.getActivity("friends");
+		if(friends != null) {
+			friends.adapter.refreshFriends();
+			friends.adapter.notifyDataSetChanged();
+		}
+		
 	}
 }

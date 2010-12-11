@@ -1,4 +1,5 @@
 package cz.vutbr.fit.tam.and10;
+import android.app.LocalActivityManager;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -17,6 +18,8 @@ public class MainWindow extends TabActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        KeepDoinApplication global = (KeepDoinApplication) getApplication();
         
         Resources res = getResources();  // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
@@ -61,5 +64,9 @@ public class MainWindow extends TabActivity {
 
         // nastaveni defaultniho tabu
         tabHost.setCurrentTabByTag("now");
+
+
+        LocalActivityManager manager = getLocalActivityManager();
+        global.manager = manager;
     }
 }

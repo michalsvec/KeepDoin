@@ -37,7 +37,12 @@ public class MainMenu extends Activity {
 	private void doSynchronize() {
 		
 		Synchronization sync = new Synchronization(activity);
-		sync.synchronize();
+		try {
+			sync.synchronize();
+		} catch (IOException e) {
+			Log.e("KeepDoin", "doSynchronize()", e);
+			Toast.makeText(activity.getApplicationContext(),"Synchronization error", Toast.LENGTH_SHORT).show();
+		}
 		
 	}
 

@@ -25,6 +25,7 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
 	
 	private String accountName;
 	private int accountId;
+	public FriendListAdapter adapter= null;
 	
 	//private User friends[] = null;
 
@@ -52,13 +53,14 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
 			Toast.makeText(this, "No friends yet. Don't be shy! Make some!", Toast.LENGTH_LONG).show();
 			return;
 		}
-			
+
+		// friends adapter
+		adapter = new FriendListAdapter(this, this.friends);
 		
 		// initialize friends gridview
 		GridView gridview = (GridView) findViewById(R.id.friendsview);
-        gridview.setAdapter(new FriendListAdapter(this, this.friends));
+        gridview.setAdapter(adapter);
         Log.i("KeepDoin", "Adaper set");
-
 
         // event na kliknuti
         gridview.setOnItemClickListener(new OnItemClickListener() {

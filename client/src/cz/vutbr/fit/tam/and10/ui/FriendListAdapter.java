@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.helpers.Gravatar;
+import cz.vutbr.fit.tam.and10.helpers.SQLDriver;
 import cz.vutbr.fit.tam.and10.helpers.User;
 
 public class FriendListAdapter extends BaseAdapter {
@@ -39,6 +40,13 @@ public class FriendListAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void refreshFriends() throws IOException {
+    	SQLDriver sql = new SQLDriver(mContext);
+    	this.friends = sql.getFriends();
+    	sql.closeDB();
+    }
+    
+    
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
     	Log.i("KeepDoin", "getView()");

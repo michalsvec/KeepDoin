@@ -1,7 +1,9 @@
 package cz.vutbr.fit.tam.and10;
 
 import android.app.Application;
+import android.app.LocalActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -17,7 +19,16 @@ public class KeepDoinApplication extends Application {
 
 	public String accountName;
 	public int accountId;
-
+	/**
+	 * Activity manager for restarting tabs and activities
+	 * created in MainWindow.class
+	 *
+	 * Usage:
+	 * manager.destroyActivity("tab3", true);
+	 * manager.startActivity("tab3", new Intent(this, ThirdTab.class));
+	 * manager.getActivity("tab3");
+	 */
+	public LocalActivityManager manager;
 	
 	// detection if the internet connection is active
 	public boolean isNetworkAvailable()
