@@ -240,12 +240,14 @@ public class SQLDriver extends SQLiteOpenHelper {
 	public User getUser(int id) {
 		Log.i("KeepDoin", "getUser()");
 
-		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
-		cur.moveToFirst();
 		User user = null;
+		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
 		
-		Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+		if(cur.getCount() == 0)
+			return null;
+		
 
+		cur.moveToFirst();
 		user = new User(cur.getInt(cur.getColumnIndex("id")));
 		user.setName(cur.getString(cur.getColumnIndex("name")));
 		user.setEmail(cur.getString(cur.getColumnIndex("email")));
@@ -304,6 +306,9 @@ public class SQLDriver extends SQLiteOpenHelper {
 				if(!sql.equalsIgnoreCase((String) tables.get(table))) {
 					execSQL("DROP TABLE "+table+";"+sql);
 				}
+				
+				// TODO FIXME: mazani dat z tabulek pro debugovani synchronizace
+				//truncateTable(table);
 				
 			}
 			// table schema is okay, do nothing

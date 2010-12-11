@@ -5,37 +5,40 @@ import java.io.IOException;
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
 
-import cz.vutbr.fit.tam.and10.activities.ManageCategories;
-import cz.vutbr.fit.tam.and10.helpers.GameModel;
-import cz.vutbr.fit.tam.and10.helpers.Synchronization;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+import cz.vutbr.fit.tam.and10.activities.FriendsTab;
+import cz.vutbr.fit.tam.and10.activities.ManageCategories;
+import cz.vutbr.fit.tam.and10.helpers.GameModel;
+import cz.vutbr.fit.tam.and10.helpers.Synchronization;
 
-public class MainMenu {
+public class MainMenu extends Activity {
 
 	private Activity activity;
-
-	public MainMenu(Activity a, int menuResource, Menu menu) {
-		activity = a;
-		MenuInflater inflater = a.getMenuInflater();
+	public String dialogMsg;
+	
+	public MainMenu(Context a, int menuResource, Menu menu) {
+		activity = (Activity) a;
+		MenuInflater inflater = activity.getMenuInflater();
 		inflater.inflate(menuResource, menu);
 	}
 
 	private void doSynchronize() {
-		ProgressDialog dialog = ProgressDialog.show(activity, "", "Synchronizing...", true);
-
+		
 		Synchronization sync = new Synchronization(activity);
 		sync.synchronize();
-
-		dialog.cancel();
+		
 	}
 
 	private void doManageCategories() {
@@ -80,7 +83,9 @@ public class MainMenu {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_sync:
+			//ProgressDialog dialog = ProgressDialog.show(((Context) activity), "", "Loading. Please wait...", true);
 			doSynchronize();
+			//dialog.dismiss();
 			return true;
 
 		case R.id.menu_manage_categories:
@@ -93,5 +98,4 @@ public class MainMenu {
 		}
 		return false;
 	}
-
 }

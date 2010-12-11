@@ -28,8 +28,7 @@ public class FriendListAdapter extends BaseAdapter {
     }
 
     public int getCount() {
-    	return 3;
-		//return friends.length;
+    	return this.friends.size();
     }
 
     public Object getItem(int position) {

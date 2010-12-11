@@ -81,7 +81,7 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	this.menu = new MainMenu(this, R.menu.main_menu_friends, menu);
+    	this.menu = new MainMenu(FriendsTab.this, R.menu.main_menu_friends, menu);
     	return true;
     }
 
