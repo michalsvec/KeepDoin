@@ -41,6 +41,9 @@ public class User extends Object {
 		User tmp = null;
 		tmp = db.getUser(this.userId);
 
+		if(tmp == null)
+			throw new IOException();
+		
 		this.rankId = tmp.getId();
 		this.real_name = tmp.getName();
 		this.email = tmp.getEmail();

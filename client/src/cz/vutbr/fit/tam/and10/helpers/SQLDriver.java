@@ -5,10 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -18,6 +22,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.FriendsTab;
+import cz.vutbr.fit.tam.and10.category.Category;
+import cz.vutbr.fit.tam.and10.task.Task;
 
 /**
  * @link: 
@@ -33,11 +39,15 @@ public class SQLDriver extends SQLiteOpenHelper {
 	private String DB_PATH = null;
 	private static String DB_NAME = "keepdoindb";
 	private final Context myContext;
+	private KeepDoinApplication global = null; 
+ 
+	Hashtable<String, String> tables; 
 
 	public SQLDriver(Context context) throws IOException {
 		super(context, DB_NAME, null, 1);
 		Log.i("KeepDoin", "SQLDriver()");
 		this.myContext = context;
+
 
 		DB_PATH = "/data/data/"+context.getApplicationContext().getPackageName()+"/databases/";
 
@@ -52,11 +62,11 @@ public class SQLDriver extends SQLiteOpenHelper {
 		this.openDataBase();
 		
 		
-		// log files list
-		String list[] = myContext.fileList();
-		for(int i=0; i < list.length ; i++ ) {
-			Log.i("KeepDoin", "file list: "+ list[i]);
-		}
+//		// log files list
+//		String list[] = myContext.fileList();
+//		for(int i=0; i < list.length ; i++ ) {
+//			Log.i("KeepDoin", "file list: "+ list[i]);
+//		}
 	}
 
 
@@ -186,7 +196,7 @@ public class SQLDriver extends SQLiteOpenHelper {
 			int id = user.getInt("id");
 			String name = user.getString("name");
 			String email = user.getString("email");
-			String query = "INSERT INTO friends (id, name, email) VALUES ('"+id+"', '"+name+"', '"+email+"');";
+			String query = "INSERT INTO users (id, name, email) VALUES ('"+id+"', '"+name+"', '"+email+"');";
 			this.execSQL(query);
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -202,12 +212,13 @@ public class SQLDriver extends SQLiteOpenHelper {
 
 	public ArrayList<User> getFriends() {
 		Log.i("KeepDoin", "getFriends()");
-		KeepDoinApplication global = (KeepDoinApplication) ((FriendsTab) myContext).getApplication();
-
+		
+		this.global = (KeepDoinApplication) ((FriendsTab) myContext).getApplication();
+		
 		ArrayList<User> friends = new ArrayList<User>();
 		Cursor cur = null;
 
-		cur = db.rawQuery("SELECT * FROM friends", new String [] {});
+		cur = db.rawQuery("SELECT * FROM users", new String [] {});
 
 		cur.moveToFirst();
 		Log.i("KeepDoin", "accoutnId: "+global.accountId);
@@ -236,12 +247,14 @@ public class SQLDriver extends SQLiteOpenHelper {
 	public User getUser(int id) {
 		Log.i("KeepDoin", "getUser()");
 
-		Cursor cur = db.rawQuery("SELECT * FROM friends WHERE id="+id, new String [] {});
-		cur.moveToFirst();
 		User user = null;
+		Cursor cur = db.rawQuery("SELECT * FROM users WHERE id="+id, new String [] {});
 		
-		Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+		if(cur.getCount() == 0)
+			return null;
+		
 
+		cur.moveToFirst();
 		user = new User(cur.getInt(cur.getColumnIndex("id")));
 		user.setName(cur.getString(cur.getColumnIndex("name")));
 		user.setEmail(cur.getString(cur.getColumnIndex("email")));
@@ -258,8 +271,9 @@ public class SQLDriver extends SQLiteOpenHelper {
 		String query = "DELETE FROM "+table+";";
 		this.execSQL(query);
 	}
-	
-	
+
+
+
 	public void closeDB() {
 		Log.i("KeepDoin", "closeDB()");
 		
@@ -267,5 +281,155 @@ public class SQLDriver extends SQLiteOpenHelper {
 			Log.i("KeepDoin", "closing database");
 			db.close();
 		}
+	}
+
+
+
+	public void checkSchema() {
+		Log.i("KeepDoin", "checkSchema()");
+		
+		tables = new Hashtable<String, String>();
+		tables.put("users", 
+				"CREATE TABLE users (email TEXT, name TEXT, id INTEGER PRIMARY KEY)"); 
+		tables.put("tasks", 
+				"CREATE TABLE tasks (id INTEGER PRIMARY KEY, name TEXT, category_id NUMERIC, is_done NUMERIC, priority_id BLOB, deadline TEXT, current_reward_cache NUMERIC)");
+		tables.put("categories",
+				"CREATE TABLE categories (id INTEGER PRIMARY KEY, user_id NUMERIC, name NUMERIC, priority NUMERIC)");
+		
+		
+		
+		Cursor cur = db.rawQuery("SELECT * FROM sqlite_master ORDER BY name", new String [] {});
+
+		// iteration over all tables and check if the schema is correct 
+		cur.moveToFirst();
+		while (cur.isAfterLast() == false) {
+			String table = cur.getString(cur.getColumnIndex("tbl_name"));
+			Log.i("KeepDoin", "tabulka:"+table);
+
+			// this excludes metadata tables etc. Just tables we need
+			if(((String) tables.get(table)) != null) {
+				String sql   = cur.getString(cur.getColumnIndex("sql"));
+				Log.i("KeepDoin", "tabulka: "+table+" - "+sql);
+				
+				Log.i("KeepDoin", sql+"\n"+table);
+				
+				if(!sql.equalsIgnoreCase((String) tables.get(table))) {
+					execSQL("DROP TABLE "+table+";"+sql);
+				}
+				
+				// TODO FIXME: mazani dat z tabulek pro debugovani synchronizace
+				//truncateTable(table);
+				
+			}
+			// table schema is okay, do nothing
+			else {
+				Log.i("KeepDoin", "tabulka: "+table+" - SKIP");
+			}
+
+			// removing from hashmap 
+			// tables which stays in hashmap doesnt exists, so we have to create them  
+			tables.remove(table);
+
+			
+			cur.moveToNext();
+		}
+		cur.close();
+		
+		for (Map.Entry<String, String> entry : tables.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
+			Log.i("KeepDoin", "new table: "+key);
+			execSQL(value);
+		}
+	}
+
+
+
+	/**
+	 * Loads all categories with tasks
+	 * @param userId
+	 * @return List<Category> list of categories
+	 */
+	public List<Category> getUserCategories(int userId) {
+		Log.i("KeepDoin", "getUserCategories()");
+
+		ArrayList<Category> categories = new ArrayList<Category>();
+		Cursor cur = null;
+		
+		cur = db.rawQuery("SELECT * FROM categories WHERE user_id = "+userId+" ORDER BY priority ASC", new String [] {});
+
+		cur.moveToFirst();
+		while (cur.isAfterLast() == false) {
+			Log.i("KeepDoin", "id:"+cur.getInt(cur.getColumnIndex("id")));
+
+			Category category = new Category((Activity) myContext, cur.getString(cur.getColumnIndex("name")));
+			
+			// loads all tasks in category
+			Cursor taskCur = null;
+			taskCur = db.rawQuery("SELECT * FROM tasks WHERE category_id = "+cur.getInt(cur.getColumnIndex("id"))+" ORDER BY priority_id ASC", new String [] {});
+			taskCur.moveToFirst();
+			while (taskCur.isAfterLast() == false) {
+				Task task = new Task(
+						(Activity) myContext,
+						cur.getString(cur.getColumnIndex("name")),
+						Task.Priority.values()[cur.getInt(cur.getColumnIndex("priority_id"))]);
+				//task.setDeadline(new Date(cur.getColumnIndex("date")))
+				//String date = taskCur.getString(cur.getColumnIndex("date"));
+				//String[] tokens = date.split("-");
+				
+				//Date d = new Date
+				
+				category.addTask(task);
+			}
+
+			categories.add(category);
+			cur.moveToNext();
+		}
+		cur.close();
+		return categories;
+	}
+
+
+
+	/**
+	 * Save new task and returns id
+	 * @param Task task
+	 * @return int id
+	 */
+	public int saveTask(Task task) {
+		Log.i("KeepDoin", "saveTask()");
+
+		String query = "INSERT INTO tasks (name, category_id, is_done) VALUES ('"+
+			task.getName()+"', '"+
+			task.getCategoryId()+"', '"+
+			task.getIsDone()+"');";
+
+		this.execSQL(query);
+		Cursor cur= db.rawQuery("SELECT last_insert_rowid();", new String [] {});
+		cur.moveToFirst();
+		int id = cur.getInt(0);
+		
+		return id;
+	}
+
+
+
+	/**
+	 * Save new category and returns id
+	 * @param Category category
+	 * @return int id
+	 */
+	public int saveCategory(Category category) {
+		Log.i("KeepDoin", "saveCategory()");
+
+		String query = "INSERT INTO categories (user_id, name, priority) VALUES (1, '"+
+			category.getName()+"', 1);";
+
+		this.execSQL(query);
+		Cursor cur= db.rawQuery("SELECT last_insert_rowid();", new String [] {});
+		cur.moveToFirst();
+		int id = cur.getInt(0);
+
+		return id;
 	}
 }

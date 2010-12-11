@@ -60,20 +60,12 @@ public class Synchronization {
         		friendsList = model.getApiResult(global.accountId, "friendsanduser");
         	} catch(ClientProtocolException e) {
         		Toast.makeText(mContext, "Friends synchronization failed with 404. Try again later", Toast.LENGTH_LONG).show();
+        		Log.e("KeepDoin", "synchronizeFriendsAndUser()", e);
         		return;
         	}
 
 			// friends table truncate
 			this.db.truncateTable("friends");
-			Cursor cur = db.db.rawQuery("SELECT name FROM sqlite_master ORDER BY name", new String [] {});
-
-			cur.moveToFirst();
-			while (cur.isAfterLast() == false) {
-				Log.i("KeepDoin", "tabulka:"+cur.getString(cur.getColumnIndex("name")));
-				cur.moveToNext();
-			}
-			cur.close();
-
 
 			if(friendsList != null) {
 				friendsArray = friendsList.getJSONArray("friendsanduser");

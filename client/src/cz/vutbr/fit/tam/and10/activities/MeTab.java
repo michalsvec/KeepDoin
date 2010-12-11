@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.helpers.User;
@@ -31,16 +32,15 @@ public class MeTab extends Activity implements AccountInfoHolder {
         // nastaveni layoutu pro friendy
         setContentView(R.layout.user_detail);
 
-        GridView gridview = (GridView) findViewById(R.id.badges);
-        gridview.setAdapter(new BadgesAdapter(this, 6));
+//        GridView gridview = (GridView) findViewById(R.id.badges);
+//        gridview.setAdapter(new BadgesAdapter(this, 6));
         
         // nacteni informaci o uzivateli
         User user = new User(userId);
         try {
 			user.loadData(this);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Toast.makeText(this, "Synchronize first. Then, you'll see some really nice guy here.", Toast.LENGTH_LONG).show();
 		}
         TextView real_name = (TextView) findViewById(R.id.real_name);
         real_name.setText(user.getName());
