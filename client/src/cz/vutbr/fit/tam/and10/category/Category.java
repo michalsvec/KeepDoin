@@ -1,11 +1,15 @@
 package cz.vutbr.fit.tam.and10.category;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.dialogs.AddTaskDialog;
 import cz.vutbr.fit.tam.and10.dialogs.ChangeCategoryTextDialog;
 import cz.vutbr.fit.tam.and10.dialogs.RemoveCategoryDialog;
 import cz.vutbr.fit.tam.and10.dialogs.TextDialog;
+import cz.vutbr.fit.tam.and10.task.Task;
 
 public class Category {
 
@@ -13,14 +17,11 @@ public class Category {
 	
 	protected String name;
 	protected int order;
+	protected List<Task> tasks = new ArrayList<Task>();
 
-//	private static ArrayList<Category> categories;
-	
 	public Category(Activity a, String name) {
 		this.activity = a;
 		this.name = name;
-//		this.order = categories.size();
-//		categories.add(order, this);
 	}
 	
 	public void createTaskDialog() {
@@ -35,6 +36,14 @@ public class Category {
 		TextDialog d = new ChangeCategoryTextDialog(activity, this);
 		d.setDefaultValue(name);
 		d.show();
+	}
+	
+	public void addTasks(List<Task> tasks) {
+		this.tasks.addAll(tasks);
+	}
+	
+	public void addTask(Task task) {
+		this.tasks.add(task);
 	}
 	
 	public void changeText(String text) {
@@ -61,11 +70,15 @@ public class Category {
 		return this.name;
 	}
 	
-//	public int getOrder() {
-//		return order;
-//	}
+	public int getOrder() {
+		return order;
+	}
 
 	public String toString() {
 		return getName();
+	}
+	
+	public List<Task> getTasks() {
+		return tasks;
 	}
 }
