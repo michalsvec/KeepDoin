@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import cz.vutbr.fit.tam.and10.KeepDoin;
+import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.helpers.User;
@@ -21,13 +21,9 @@ public class MeTab extends Activity implements AccountInfoHolder {
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        // launch intent - we get user ID from extra
-        int userId = 4;
         
-    	// KeepDoin appState = ((KeepDoin) getApplicationContext());
-    	// userId = appState.getAccountId();
+    	KeepDoinApplication global = (KeepDoinApplication) getApplication();
+    	int userId = global.accountId;
 
         // nastaveni layoutu pro friendy
         setContentView(R.layout.user_detail);
@@ -41,6 +37,7 @@ public class MeTab extends Activity implements AccountInfoHolder {
 			user.loadData(this);
 		} catch (IOException e) {
 			Toast.makeText(this, "Synchronize first. Then, you'll see some really nice guy here.", Toast.LENGTH_LONG).show();
+			return;
 		}
        
 		String email = user.getEmail();

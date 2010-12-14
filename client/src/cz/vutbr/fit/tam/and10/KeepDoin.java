@@ -168,6 +168,10 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
         Log.i("KeepDoin", "starting activity MainWindow");
         startActivity(intent);
 	}
+	
+	public void closeApp(View view) {
+		finish();
+	}
 
 	private String getGoogleAccount() {
         Account[] accts = AccountManager.get(this).getAccounts(); 
