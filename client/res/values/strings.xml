@@ -12,7 +12,7 @@
     <string name="login_message">Only the name of your Google account is used.</string>
     <string name="login_activity_sign_up_button">Registration</string>
     <string name="login_activity_sign_in_button">Login with Google account</string>
-    <string name="login_activity_loginfail">Login failed. Register first.</string>
+    <string name="login_activity_loginfail">Authentication failed.</string>
     <string name="login_activity_regfail">Registration failed.</string>
 
     <!-- tasks -->

@@ -230,7 +230,16 @@ public class GameModel {
 				
 				bobInteger = new BigInteger(json.getString("bob"));
 				secret = Encryption.dhGetSecret(myInteger, bobInteger);
-				myContext.setSecret(secret.toString());
+				
+				String secretString = secret.toString();
+				if (secretString.length() < 32) {
+					int padding = 32 - secretString.length();
+					for (int i = 0; i < padding; ++i)
+						secretString += "0";
+				} else if (secretString.length() > 32) {
+					secretString = secretString.substring(0, 32);
+				}
+				myContext.setSecret(secretString);
 			} else {
 				return false;
 			}

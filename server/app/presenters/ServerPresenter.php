@@ -247,6 +247,11 @@ class ServerPresenter extends BasePresenter
     		$this->data['status'] = 'false';
 		} catch (AuthenticationException $e) {
 			$secret = gmp_strval(dh_get_secret($my_integer, gmp_init($alice)));
+			if (strlen($secret) < 32) {
+				$secret = str_pad($secret, 32 - strlen($secret), '0');
+			} else if (strlen($secret) > 32) {
+				$secret = substr($secret, 0, 32);
+			}
 			dibi::query('INSERT INTO [users]', array('email' => $id, 'password' => $secret));
 
 			$this->data['status'] = 'true';
