@@ -1,7 +1,6 @@
 package cz.vutbr.fit.tam.and10.helpers;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 import cz.vutbr.fit.tam.and10.activities.FriendsTab;
+import cz.vutbr.fit.tam.and10.activities.MeTab;
 
 public class Synchronization {
 
@@ -52,12 +52,11 @@ public class Synchronization {
         JSONObject friendsList = null;
         JSONArray friendsArray = null;
         
-        GameModel model = new GameModel();
         try {
 
         	KeepDoinApplication global = (KeepDoinApplication) mContext.getApplication();
         	try {
-        		friendsList = model.getApiResult(global.accountId, "friendsanduser");
+        		friendsList = GameModel.getApiResult(global.accountId, "friendsanduser");
         	} catch(ClientProtocolException e) {
         		Toast.makeText(mContext, "Friends synchronization failed with 404. Try again later", Toast.LENGTH_LONG).show();
         		Log.e("KeepDoin", "synchronizeFriendsAndUser()", e);
@@ -106,7 +105,6 @@ public class Synchronization {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		File file = new File(target_file);
 		
 		URLConnection ucon = url.openConnection();
 		InputStream is = ucon.getInputStream();
@@ -149,5 +147,14 @@ public class Synchronization {
 			friends.adapter.notifyDataSetChanged();
 		}
 		
+		MeTab me = (MeTab) global.manager.getActivity("me");
+		if (me != null) {
+			User user = new User(global.accountId);
+			user.loadData(me);
+			
+			String email = user.getEmail();
+			me.setRealName(email.substring(0, email.indexOf("@")));
+			me.setRank(user.getRank());
+		}
 	}
 }

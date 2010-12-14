@@ -13,12 +13,12 @@ import cz.vutbr.fit.tam.and10.category.Category;
 import cz.vutbr.fit.tam.and10.task.Task;
 import cz.vutbr.fit.tam.and10.task.Tasks;
 
-public class NowTab extends Activity implements AccountInfoHolder {
+public class NowTab extends Activity implements AccountInfoHolder, TaskListTab {
 	
 	private String accountName;
 	private int accountId;
 	
-	private Tasks tasks;
+	public Tasks tasks;
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +48,10 @@ public class NowTab extends Activity implements AccountInfoHolder {
 	}
     
     public boolean onContextItemSelected(MenuItem item) {
-		return tasks.onContextItemSelected(item);
+		boolean ret = tasks.onContextItemSelected(item);
+        setContentView(tasks.getView());
+        registerForContextMenu(tasks.getListView());
+        return ret;
     }
     
     private MainMenu menu;
@@ -82,5 +85,10 @@ public class NowTab extends Activity implements AccountInfoHolder {
 	@Override
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
+	}
+
+	@Override
+	public Tasks getTasks() {
+		return tasks;
 	}
 }

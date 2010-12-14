@@ -2,6 +2,8 @@ package cz.vutbr.fit.tam.and10.task;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public class TasksAdapter extends ArrayAdapter<Task> implements OnCreateContextM
 	}
 	
 	public TasksAdapter(Activity activity, Task[] tasks) {
-		super(activity, R.layout.task, tasks);
+		super(activity, R.layout.task, new ArrayList<Task>(Arrays.asList(tasks)));
 		this.activity = activity;
 	}
 	

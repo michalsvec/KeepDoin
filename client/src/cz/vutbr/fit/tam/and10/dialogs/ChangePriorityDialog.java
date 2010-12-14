@@ -20,7 +20,19 @@ public class ChangePriorityDialog extends Dialog {
 	}
 	
 	protected void processValue(int item) {
-		task.changePriority(item);
+		switch (item) {
+		case 0:
+			task.changePriority(Task.Priority.LOW);
+			break;
+		case 1:
+			task.changePriority(Task.Priority.MEDIUM);
+			break;
+		case 2:
+			task.changePriority(Task.Priority.HIGH);
+			break;
+		default:
+			break;
+		}
 	}
 
 	@Override

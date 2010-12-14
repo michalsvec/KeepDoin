@@ -250,10 +250,11 @@ public class SQLDriver extends SQLiteOpenHelper {
 		User user = null;
 		Cursor cur = db.rawQuery("SELECT * FROM users WHERE id="+id, new String [] {});
 		
-		if(cur.getCount() == 0)
+		if(cur.getCount() == 0) {
+			cur.close();
 			return null;
+		}
 		
-
 		cur.moveToFirst();
 		user = new User(cur.getInt(cur.getColumnIndex("id")));
 		user.setName(cur.getString(cur.getColumnIndex("name")));
@@ -404,9 +405,10 @@ public class SQLDriver extends SQLiteOpenHelper {
 			task.getIsDone()+"');";
 
 		this.execSQL(query);
-		Cursor cur= db.rawQuery("SELECT last_insert_rowid();", new String [] {});
+		Cursor cur = db.rawQuery("SELECT last_insert_rowid();", new String [] {});
 		cur.moveToFirst();
 		int id = cur.getInt(0);
+		cur.close();
 		
 		return id;
 	}

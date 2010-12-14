@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.math.BigInteger;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,67 +26,37 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
+
 import cz.vutbr.fit.tam.and10.KeepDoin;
-import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
+import cz.vutbr.fit.tam.and10.helpers.Encryption;
 
 public class GameModel {
 
-	private static String serverURL = "http://todogame.michalsvec.cz/api/";
-	
+	private static String serverURL = "";
+	private static KeepDoin myContext = null;
 
 	private enum RESTMethods { GET, POST, DELETE, UPDATE } 
 
+	private static HttpClient httpClient = new DefaultHttpClient();
 
-
-
-	/**
-	 * Common download method
-	 * @param accountId actual logged user
-	 * @param apiType   /api/apiType/id
-	 * @return
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 * @throws JSONException
-	 */
-	public JSONObject getApiResult(int accountId, String apiType) throws ClientProtocolException, IOException, JSONException {
-		JSONObject json = new JSONObject();
-		String requestURL = serverURL + apiType+"/"+accountId;
-		json = processHttpRequest(requestURL, RESTMethods.GET, null);
-		return json;
-	} 
-
-
-
-	public void postFriendRequest(int user_id, String email) throws ClientProtocolException, IOException, JSONException {
-		String requestURL = serverURL + "friendship/" + user_id;
-		
-		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("email", email)); 
-		
-		processHttpRequest(requestURL, RESTMethods.POST, params);
-		return;
-	}
-
-
-
-	/**
-	 * Process the GET request and return JSON Object
-	 * 
-	 * @author misa
-	 * @source http://senior.ceng.metu.edu.tr/2009/praeda/2009/01/11/a-simple-restful-client-at-android/
-	 * @source http://www.androidsnippets.org/snippets/36/index.html
-	 * @param url
-	 * @throws ClientProtocolException
-	 * @throws IOException
-	 * @throws JSONException 
-	 */
+	
 	private static JSONObject processHttpRequest(String url, RESTMethods type, List<NameValuePair> params) throws ClientProtocolException, IOException, JSONException {
 		Log.i("KeepDoin", "processHttpRequest("+url+")");
 		
-		HttpClient httpClient = new DefaultHttpClient();
 		HttpResponse response;
+		Boolean encryptionOff = false;
 		int status;
 
+		if (params != null) {
+			NameValuePair encryptionValuePair = new BasicNameValuePair("encryptionOff", "true");
+			if (params.contains(encryptionValuePair)) {
+				Log.i("KeepDoin", "encryptionOff in params!");
+				params.remove(params.indexOf(encryptionValuePair));
+				encryptionOff = true;
+			}
+		}
+		Log.i("KeepDoin", "encryptionOff: " + encryptionOff);
+		
 		// TODO: write next REST methods, when needed
 		if(type == RESTMethods.POST) {
 			Log.i("KeepDoin", "RESTMethods.POST");
@@ -119,9 +91,15 @@ public class GameModel {
                 InputStream instream = entity.getContent();
                 String result= convertStreamToString(instream);
                 Log.i("KeepDoin", result);
+                
+                if (!encryptionOff) {
+                	String keyString = myContext.getSecret();
+                	result = Encryption.decrypt(result, keyString);
+                }
+                Log.i("KeepDoin", "result: " + result);
  
                 // A Simple JSONObject Creation
-                JSONObject json=new JSONObject(result);
+                JSONObject json = new JSONObject(result);
                 Log.i("KeepDoin","<jsonobject>\n"+json.toString()+"\n</jsonobject>");
 
                 // Closing the input stream will trigger connection release
@@ -138,20 +116,7 @@ public class GameModel {
 		return null;
 	}
 
-
-
-	/**
-	 * http://senior.ceng.metu.edu.tr/2009/praeda/2009/01/11/a-simple-restful-client-at-android/
-	 * @param is
-	 * @return
-	 */
 	 private static String convertStreamToString(InputStream is) {
-        /*
-         * To convert the InputStream to String we use the BufferedReader.readLine()
-         * method. We iterate until the BufferedReader return null which means
-         * there's no more data to read. Each line will appended to a StringBuilder
-         * and returned as String.
-         */
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
  
@@ -172,36 +137,17 @@ public class GameModel {
         return sb.toString();
     }
 
- 
- 
-    /**
-     * Attempts to authenticate the user credentials on the server.
-     * 
-     * @param accountName google account stored in phone
-     * @param type registration or login
-     * @param handler The main UI thread's handler instance.
-     * @param context The caller Activity's context
-     * @return Thread The thread on which the network mOperations are executed.
-     */
-    public static Thread attemptAuth(final String accountName, final String type, final Handler handler, final Context context) {
+    public static Thread attemptAuth(final String accountName, final Handler handler, final Context context) {
     	Log.i("KeepDoin","attemptAuth()");
     	final Runnable runnable = new Runnable() {
             public void run() {
-                authenticate(accountName, type, handler, context);
+                authenticationProcess(accountName, handler, context);
             }
         };
-        // run on background thread.
+
         return GameModel.performOnBackgroundThread(runnable);
     }
 
-
-
-    /**
-     * Executes the network requests on a separate thread.
-     * 
-     * @param runnable The runnable instance containing network mOperations to
-     *        be executed.
-     */
     public static Thread performOnBackgroundThread(final Runnable runnable) {
         final Thread t = new Thread() {
             @Override
@@ -217,103 +163,177 @@ public class GameModel {
         return t;
     }
 
-
-
-    /**
-     * Connects to the server, authenticates the provided username and password.
-     * 
-     * @param username The user's username
-     * @param type     Registration/login
-     * @param handler  The hander instance from the calling UI thread.
-     * @param context  The context of the calling Activity.
-     * @return boolean The boolean result indicating whether the user was
-     *         successfully authenticated.
-     */
-    public static boolean authenticate(String accountName, String type, Handler handler, final Context context) {
+    public static void authenticationProcess(String accountName, Handler handler, final Context context) {
     	Log.i("KeepDoin", "authenticate()");
+    	myContext = (KeepDoin) context;
+    	serverURL = myContext.getRemoteAPIUrl();
+		
+    	Boolean registred = myContext.getRegistred();
+    	if (!registred)
+    		registration(serverURL, accountName, myContext);
     	
-		JSONObject json = new JSONObject();
-		RESTMethods method; 
+    	String auth = login(serverURL, accountName, myContext);
+		if (auth != null) {
+			if (!authenticate(serverURL, accountName, myContext, auth)) {
+				sendResult(false, handler, context);
+				return;
+			}
+		} else {
+			sendResult(false, handler, context);
+			return;
+		}
+		
+		sendResult(true, handler, context);
+    }
 
-		// type of request - either login or registration
-		String typeParam = "login";
-		//List<NameValuePair> params = new ArrayList<NameValuePair>(1);
+    private static Boolean registration(String serverURL, String accountName, final KeepDoin myContext)
+    {
+    	RESTMethods method;
+    	String requestUrl;
+    	JSONObject json = new JSONObject();
+    	
+    	List<NameValuePair> params = new ArrayList<NameValuePair>();
+		
+		method = RESTMethods.GET;
+		params.add(new BasicNameValuePair("encryptionOff", "true"));
+		requestUrl = serverURL + "registration" + "/" + accountName;
+		
+		BigInteger myInteger, bobInteger, secret;
+		myInteger = new BigInteger(20, new Random());
+		
+		requestUrl += "?alice=" + Encryption.dhGetToSend(myInteger).toString();
 		
 		try {
-			if(type.equals("registration")) {
-				method = RESTMethods.POST;
-				typeParam = "registration";
-				Log.i("KeepDoin", "type: POST");
-			}
-			else {
-				method = RESTMethods.GET;
-				typeParam = "login";
-				Log.i("KeepDoin", "type: GET");
-			}
-
-			// params are for future use
-			//params.add(new BasicNameValuePair("email", accountName));
-			String requestURL = serverURL + typeParam +"/"+accountName;
-			Log.d("KeepDoin", "requestUrl:"+requestURL);
-
-			json = processHttpRequest(requestURL, method, null);
+			json = processHttpRequest(requestUrl, method, params);
 		} catch (ClientProtocolException e) {
 			Log.e("KeepDoin", "ClientProtocolException");
 			e.printStackTrace();
+			return false;
 		} catch (IOException e) {
-			Log.e("KeepDoin", " IOException");
+			Log.e("KeepDoin", "IOException");
 			e.printStackTrace();
+			return false;
 		} catch (JSONException e) {
-			Log.e("KeepDoin", " JSONException");
+			Log.e("KeepDoin", "JSONException");
 			e.printStackTrace();
+			return false;
 		}
-
-		Log.i("KeepDoin", "authenticate json loaded");
-		Log.i("KeepDoin", json.toString());
 		
 		boolean status = false;
 		int id = 0;
 		
-		// return from thread
-		if(json != null) {
-			Log.i("KeepDoin", "auth json okay");
-			
-			
-			try {
-				status = json.getBoolean("status");
+		try {
+			status = json.getBoolean("status");
+			if (status) {
 				id = json.getInt("id");
-			} catch (JSONException e1) {
-				Log.e("KeepDoin", " JSONException status reading");
-				e1.printStackTrace();
+				myContext.setAccountId(id);
+				
+				bobInteger = new BigInteger(json.getString("bob"));
+				secret = Encryption.dhGetSecret(myInteger, bobInteger);
+				myContext.setSecret(secret.toString());
+			} else {
+				return false;
 			}
-			
-			if(status) {
-				// now the ID is available from the application
-				((AccountInfoHolder)context).setAccountId(id);
-				Log.i("KeepDoin", " accountId set");
-				sendResult(true, handler, context);
-			}
-			else
-				sendResult(false, handler, context);
+		} catch (JSONException e1) {
+			Log.e("KeepDoin", "JSONException");
+			e1.printStackTrace();
+			return false;
 		}
-		else {
-			Log.e("KeepDoin", "auth json null");
-			sendResult(false, handler, context);
-		}
-
-		return false;
+		
+		return true;
     }
 
+    private static String login(String serverURL, String accountName, final KeepDoin myContext)
+    {
+    	RESTMethods method;
+    	String requestUrl;
+    	JSONObject json = new JSONObject();
+		
+		method = RESTMethods.GET;
+		requestUrl = serverURL + "login" + "/" + accountName;
+		
+		try {
+			json = processHttpRequest(requestUrl, method, null);
+		} catch (ClientProtocolException e) {
+			Log.e("KeepDoin", "ClientProtocolException");
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			Log.e("KeepDoin", "IOException");
+			e.printStackTrace();
+			return null;
+		} catch (JSONException e) {
+			Log.e("KeepDoin", "JSONException");
+			e.printStackTrace();
+			return null;
+		}
+		
+		boolean status = false;
+		String auth = null;
+		int id = 0;
+		
+		try {
+			status = json.getBoolean("status");
+			if (status) {
+				auth = json.getString("auth");
+				id = json.getInt("id");
+				myContext.setAccountId(id);
+			} else {
+				return null;
+			}
+		} catch (JSONException e1) {
+			Log.e("KeepDoin", "JSONException");
+			e1.printStackTrace();
+			return null;
+		}
+		
+		return auth;
+    }
 
-
-    /**
-     * Sends the authentication response from server back to the caller main UI
-     * thread through its handler.
-     * 
-     * @param result The boolean holding authentication result
-     * @param handler The main UI thread's handler instance.
-     * @param context The caller Activity's context.
-     */
+    private static Boolean authenticate(String serverURL, String accountName, final KeepDoin myContext, String auth)
+    {
+    	RESTMethods method;
+    	String requestUrl;
+    	JSONObject json = new JSONObject();
+		
+		method = RESTMethods.GET;
+		requestUrl = serverURL + "authenticate" + "/" + accountName;
+		
+		BigInteger authNum = new BigInteger(auth);
+		authNum = authNum.multiply(new BigInteger("2"));
+		
+		requestUrl += "?auth=" + authNum.toString();
+		
+		try {
+			json = processHttpRequest(requestUrl, method, null);
+		} catch (ClientProtocolException e) {
+			Log.e("KeepDoin", "ClientProtocolException");
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			Log.e("KeepDoin", "IOException");
+			e.printStackTrace();
+			return false;
+		} catch (JSONException e) {
+			Log.e("KeepDoin", "JSONException");
+			e.printStackTrace();
+			return false;
+		}
+		
+		boolean status = false;
+		
+		try {
+			status = json.getBoolean("status");
+			if (status)
+				return true;
+		} catch (JSONException e1) {
+			Log.e("KeepDoin", "JSONException");
+			e1.printStackTrace();
+		}
+		
+		return false;
+    }
+    
     private static void sendResult(final Boolean result, final Handler handler, final Context context) {
     	Log.i("KeepDoin", "sendResult()");
     	
@@ -326,5 +346,37 @@ public class GameModel {
             }
         });
     }
-    
+
+	public static JSONObject getApiResult(int accountId, String apiType) throws ClientProtocolException, IOException, JSONException {
+		JSONObject json = new JSONObject();
+		String requestURL = serverURL + apiType+"/"+accountId;
+		json = processHttpRequest(requestURL, RESTMethods.GET, null);
+		return json;
+	} 
+
+	public static Boolean getFriendship(int accountId, String friendEmail) throws ClientProtocolException, IOException, JSONException {
+		JSONObject json = new JSONObject();
+		String requestURL = serverURL + "friendship/" + accountId + "?email=" + friendEmail;
+		
+		json = processHttpRequest(requestURL, RESTMethods.GET, null);
+		
+		Boolean status = false;
+		try {
+			status = json.getBoolean("status");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return status;
+	}
+	
+	public static void postFriendRequest(int user_id, String email) throws ClientProtocolException, IOException, JSONException {
+		String requestURL = serverURL + "friendship/" + user_id;
+		
+		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("email", email)); 
+		
+		processHttpRequest(requestURL, RESTMethods.POST, params);
+		return;
+	}
 }

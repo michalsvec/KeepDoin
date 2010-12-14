@@ -42,9 +42,11 @@ public class Category {
 		Task task = new Task(activity, text, Task.Priority.MEDIUM);
 		task.setCategoryId(id);
 		try {
-			int id = new SQLDriver(activity).saveTask(task);
+			SQLDriver driver = new SQLDriver(activity);
+			int id = driver.saveTask(task);
 			task.setId(id);
 			addTask(task);
+			driver.closeDB();
 		} catch (IOException e) {
 			Toast.makeText(activity, "Unable to save new task.", Toast.LENGTH_SHORT).show();
 			Log.e("KeepDoin", "SaveTask()", e);

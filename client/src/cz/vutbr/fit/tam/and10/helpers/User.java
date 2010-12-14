@@ -2,10 +2,6 @@ package cz.vutbr.fit.tam.and10.helpers;
 
 import java.io.IOException;
 
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 
 
@@ -41,8 +37,10 @@ public class User extends Object {
 		User tmp = null;
 		tmp = db.getUser(this.userId);
 
-		if(tmp == null)
+		if(tmp == null) {
+			db.closeDB();
 			throw new IOException();
+		}
 		
 		this.rankId = tmp.getId();
 		this.real_name = tmp.getName();

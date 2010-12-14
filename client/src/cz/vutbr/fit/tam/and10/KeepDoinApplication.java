@@ -3,7 +3,6 @@ package cz.vutbr.fit.tam.and10;
 import android.app.Application;
 import android.app.LocalActivityManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 

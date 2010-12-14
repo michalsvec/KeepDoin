@@ -4,11 +4,8 @@ import java.io.IOException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.json.JSONException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
-import cz.vutbr.fit.tam.and10.activities.FriendsTab;
 import cz.vutbr.fit.tam.and10.activities.ManageCategories;
 import cz.vutbr.fit.tam.and10.helpers.GameModel;
 import cz.vutbr.fit.tam.and10.helpers.Synchronization;
@@ -58,11 +54,13 @@ public class MainMenu extends Activity {
 		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String email = input.getText().toString().trim();
-
-				GameModel model = new GameModel();
-
+				
+				KeepDoinApplication global = (KeepDoinApplication) activity.getApplication();
 				try {
-					model.postFriendRequest(13, email);
+					if (GameModel.getFriendship(global.accountId, email))
+						doSynchronize();
+					else
+						Toast.makeText(global, "Friend not found.", Toast.LENGTH_SHORT).show();
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -70,8 +68,6 @@ public class MainMenu extends Activity {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				Toast.makeText(activity.getApplicationContext(),
-						"Request sent", Toast.LENGTH_SHORT).show();
 			}
 		});
 

@@ -52,16 +52,17 @@ public class UserDetail extends Activity implements AccountInfoHolder {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        TextView real_name = (TextView) findViewById(R.id.real_name);
-        real_name.setText(user.getName());
+        
+		String email = user.getEmail();
+		TextView real_name = (TextView) findViewById(R.id.real_name);
+        real_name.setText(email.substring(0, email.indexOf("@")));
         
         TextView rank = (TextView) findViewById(R.id.rank);
-        rank.setText("rank:"+user.getRank());
+        rank.setText("rank: " + user.getRank());
         
         ImageView avatar = (ImageView) findViewById(R.id.avatar);
 
 		FileInputStream fos = null;
-		String email = user.getEmail();
 		String hash = Gravatar.getGravatarHash(email);
 		Log.i("KeepDoin", "opening: "+hash+" for email:"+email);
 		try {

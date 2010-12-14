@@ -7,7 +7,30 @@
  * @copyright Copyright (c) 2010 Jan Javorek
  */
 
-require_once ('encryption.php');
+require_once (APP_DIR.'/components/encryption.php');
+require_once (APP_DIR.'/components/Log.php');
+
+
+class MyAuthenticator extends Object implements IAuthenticator
+{
+    public function authenticate(array $credentials)
+    {
+        $username = $credentials[self::USERNAME];
+        $password = sha1($credentials[self::PASSWORD] . $credentials[self::USERNAME]);
+
+    	$user = dibi::query('
+            SELECT *
+            FROM [users] 
+            WHERE [email]=%s
+        ', $username)->fetch();
+
+        if (empty($user)) {
+            throw new AuthenticationException("User '$username' not found.", self::IDENTITY_NOT_FOUND);
+        }
+
+        return new Identity($user['id'], null, array('secret' => $user->password));
+    }
+}
 
 /**
  * Server presenter.
@@ -27,8 +50,19 @@ class ServerPresenter extends BasePresenter
     {
     	parent::startup();
     	
+    	$view = $this->getView();
+    	if ($view != 'registration' && $view != 'login' && $view != 'delete') {
+    		$user = Environment::getUser();
+    		if (!$user->isLoggedIn()) {
+    			throw new ForbiddenRequestException("You need to login first!");
+    		}
+    		if ($view != 'authenticate' && !$user->getIdentity()->authenticated) {
+    			throw new ForbiddenRequestException("You need to authenticate first!");
+    		}
+    	}
+    	
         if (!method_exists($this, self::formatRenderMethod($this->getView()))) {
-            throw new BadRequestException("API doesn't contain any '" . $this->getView() . "' method for HTTP " . strtoupper(Environment::getHttpRequest()->getMethod()) . ".");
+            throw new BadRequestException("API doesn't contain any '" . $view . "' method for HTTP " . strtoupper(Environment::getHttpRequest()->getMethod()) . ".");
         }
         
         $this->setLayout(FALSE);
@@ -39,13 +73,29 @@ class ServerPresenter extends BasePresenter
     {
     	Debug::$showBar = FALSE;
     	
+    	$encryptionOff = false;
+    	$secret = null;
+
+		$user = Environment::getUser();
+		if ($user->isLoggedIn())
+			$secret = $user->getIdentity()->secret;
+
+    	$view = $this->getView();
+    	if ($view == 'registration' || $view == 'delete')
+    		$encryptionOff = true;
+    	
 	    if (Environment::isProduction()) {
 	        $this->setView('json');
 	        
 	    } else {
 	        $this->setView('text');
 	    }
-	    $this->template->data = json_encode($this->data);
+	    
+	    $payload = json_encode($this->data);
+	    if (!$encryptionOff && $secret != null)
+	    	$payload = encrypt($payload, $secret);
+	    	
+	    $this->template->data = $payload;
     }
     
 	protected static function formatRenderMethod($view)
@@ -64,15 +114,14 @@ class ServerPresenter extends BasePresenter
     
 	public function renderGetUser($id)
 	{
+		$this->data = array();
+	
 		$this->data = dibi::query('
 		    SELECT *
 		    FROM [users]
 		    WHERE [id] = %i
 		', $id)->fetch();
 		unset($this->data['password']);
-		
-		$this->data['encrypted_name'] = encrypt($this->data['real_name'], '1234567');
-		$this->data['decrypted_name'] = decrypt($this->data['encrypted_name'], '1234567');
 		
 		// TODO post-db hook to compute score every time
 	}
@@ -181,23 +230,28 @@ class ServerPresenter extends BasePresenter
 	/**
 	 * TODO: maybe add some extra parameters
 	 */
-	public function renderPostRegistration($id)
+	public function renderGetRegistration($id)
     {
-    	$email = $id;
-		$user = dibi::query('
-		    SELECT *
-		    FROM [users]
-		    WHERE [email] = %s
-		', $email)->fetch();
+    	$alice = $this->getParam('alice');
+        $my_integer = gmp_random(2);
+        
+        $user = Environment::getUser();
+        $user->setAuthenticationHandler(new MyAuthenticator);
+        
+        try {
+            if (($alice != null) && (is_numeric($alice))) {
+    			$user->login($id, null);
+    			$user->logout();
+    		}
+    		
+    		$this->data['status'] = 'false';
+		} catch (AuthenticationException $e) {
+			$secret = gmp_strval(dh_get_secret($my_integer, gmp_init($alice)));
+			dibi::query('INSERT INTO [users]', array('email' => $id, 'password' => $secret));
 
-		if(empty($user)) {
-			dibi::query('INSERT INTO [users]', array('email' => $email));
-			
 			$this->data['status'] = 'true';
-			$this->data['id'] = dibi::insertId();
-		}
-		else {
-			$this->data['status'] = 'false';
+    		$this->data['id'] = dibi::insertId();
+    		$this->data['bob'] = gmp_strval(dh_get_tosend($my_integer));
 		}
 	}
 
@@ -205,21 +259,48 @@ class ServerPresenter extends BasePresenter
 
     public function renderGetLogin($id)
     {
-    	$user = dibi::query('
-            SELECT *
-            FROM [users] 
-            WHERE [email]=%s
-        ', $id)->fetch();
+    	$authNumber = gmp_strval(gmp_random(2));
+    
+        $user = Environment::getUser();
+        $user->setAuthenticationHandler(new MyAuthenticator);
         
-        if(!empty($user)) {
-			$this->data['status'] = 'true';
-			$this->data['id'] = $user['id'];
-
+        try {
+    		$user->login($id, null);
+    		$user->getIdentity()->authNumber = $authNumber;
+    		
+    		$this->data['status'] = 'true';
+    		$this->data['id'] = $user->getIdentity()->getId();
+    		$this->data['auth'] = $authNumber;
+		} catch (AuthenticationException $e) {
+    		$this->data['status'] = 'false';
 		}
-		else
-			$this->data['status'] = 'false';
     }
 
+
+	public function renderGetAuthenticate($id)
+	{
+		$authProcessed = $this->getParam('auth');
+		if (!$authProcessed) {
+			$this->data['status'] = 'false';
+		} else {
+			$user = Environment::getUser();
+		
+			if ($user->isLoggedIn()) {
+				$auth = $user->getIdentity()->authNumber;
+				$auth = gmp_strval(gmp_mul($auth, '2'));
+				
+				if ($auth != $authProcessed) {
+					$user->getIdentity()->authenticated = false;
+					$this->data['status'] = 'false';
+				} else {
+					$user->getIdentity()->authenticated = true;
+					$this->data['status'] = 'true';
+				}
+			} else {
+				$this->data['status'] = 'false';
+			}
+		}
+	}
 
 
     public function renderPostFriendship($id)
@@ -244,11 +325,22 @@ class ServerPresenter extends BasePresenter
 
     public function renderGetFriendship($id)
     {
+    	$email = $this->getParam('email');
     
-    	$id_2nd = dibi::fetchSingle("SELECT [id] FROM [users] WHERE [email] = %s", $_GET['email']);
-    	dibi::query('INSERT INTO [friendships] VALUES (%i, %i)', $id, $id_2nd);
+    	$friend_id = dibi::fetchSingle("SELECT [id] FROM [users] WHERE [email] = %s", $email);
+    	if (!$friend_id) {
+    		$this->data['status'] = 'false';
+    	} else {
+    	    dibi::query('INSERT INTO [friendships] VALUES (%i, %i)', $id, $friend_id);
 
-		$this->data = TRUE;
+			$this->data['status'] = 'true';
+    	}
+    }
+    
+    public function renderGetDelete()
+    {
+    	dibi::query("DELETE FROM [users]");
+    	$this->data['status'] = 'true';
     }
 
 
@@ -277,6 +369,7 @@ class ServerPresenter extends BasePresenter
     	$query[] = $id;
 
         $this->data['friendsanduser'] = dibi::fetchAll($query);
+        $this->data['status'] = 'true';
     }
 
 

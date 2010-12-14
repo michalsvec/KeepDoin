@@ -78,8 +78,8 @@ public class Task {
 		new ChangePriorityDialog(activity, this).show();
 	}
 	
-	public void changePriority(int priority) {
-		Toast.makeText(activity, "change priority to " + Priority.values()[priority], Toast.LENGTH_SHORT).show();
+	public void changePriority(Priority priority) {
+		this.priority = priority;
 	}
 	
 	public void changeCategoryDialog() {

@@ -49,11 +49,6 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
 
 		Log.i("KeepDoin", this.friends.toString());
 		
-		if(this.friends.size() == 0) {
-			Toast.makeText(this, "No friends yet. Don't be shy! Make some!", Toast.LENGTH_LONG).show();
-			return;
-		}
-
 		// friends adapter
 		adapter = new FriendListAdapter(this, this.friends);
 		
@@ -77,6 +72,9 @@ public class FriendsTab extends Activity implements AccountInfoHolder {
         
         if(this.sqlDriver != null)
         	this.sqlDriver.closeDB();
+        
+		if(this.friends.size() == 0)
+			Toast.makeText(this, "No friends yet. Don't be shy! Make some!", Toast.LENGTH_LONG).show();
     }
     
     private MainMenu menu;

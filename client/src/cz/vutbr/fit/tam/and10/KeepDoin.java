@@ -1,23 +1,30 @@
 package cz.vutbr.fit.tam.and10;
 
-
 import java.io.IOException;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import cz.vutbr.fit.tam.and10.KeepDoinApplication;
 import cz.vutbr.fit.tam.and10.activities.AccountInfoHolder;
 import cz.vutbr.fit.tam.and10.helpers.GameModel;
 import cz.vutbr.fit.tam.and10.helpers.SQLDriver;
@@ -26,180 +33,91 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
 	
 	public static final String PREFS_NAME = "KeepDoinPrefs";
 
-
-    private TextView mMessage;
-
-    private enum authTypes {AUTH_LOGIN, AUTH_REG};
-    private authTypes authType;
-    private CharSequence dialogMsg;
-
-    /** 
-     * pomoci tohoto handleru se postuje zprava zpatky z vlakna do aktivity 
-     * preda se environment, ktere reprezentuje tuto aktivitu a handler ma metodu post, kterou se 
-     * vyvola metoda v teto aktivite, ktera zajisti dokonceni prihlasovani
-     */
     private final Handler mHandler = new Handler();
-    
-    /**
-     * Promenna vlakna, ktere zpracovava pozadavek na server
-     */
     private Thread mAuthThread;
-
 	private String accountName;
-	private int accountId;
 
-	private static String getGoogleAccount(AccountManager mgr) {
-        String name = "";
-
-        Account[] accts = mgr.getAccounts(); 
-
-        for(int i=0; i<accts.length; i++) {
-        	Log.d("KeepDoin", accts[i].type+"-/-"+accts[i].name);
-
-        	// existuje google account
-        	if(accts[i].type.equals("com.google")) {
-        		Log.i("KeepDoin", "account found: "+accts[i].name);
-        		name = accts[i].name;
-        		break;
-        	}
-        }
-        
-       	return name;
-    	
-    }
-
-
-
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // kontrola, zda mame zadaneho uzivatele nekde v databazi
-        // pokud ne, nabidne se mu registrace
-        // pokud ano, spusti se normalne aplikace
-        this.accountName = getGoogleAccount(AccountManager.get(this));
-        
-        
-        
-
-        // pokud neni v telefonu zadny ucet google,vyhodi hlasku a ukonci se 
-        if(this.accountName.equals("")) {
+        setAccountName(getGoogleAccount()); 
+        if(this.accountName.equals(""))
         	setContentView(R.layout.missing_account);
-        } 
-        // kontrola, zda uz je uzivatel prihlaseny na nasem serveru - ta je ulozena
-        // v SharedPreferences
-        else {
-        	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-            // TODO: pro testovaci ucely vzdy vyskoci uvodni obrazovka - pak smazat
-        	boolean logged = settings.getBoolean("userLogged", false);
-        	//	boolean logged = false;
-        	
-            // uzivatel uz je prihlasen, normalne startujeme aplikaci
-            if(logged) {
-            	Log.i("KeepDoin", "user logged - starting app");
-            	this.accountId = settings.getInt("accountId", 0);
-            	
-            	finishAuth();
-            	// dokonceni autorizace a spusteni aplikace
-            	// ahoj
-            }
-            // neprihlasen (prvni prhlaseni, nebo smazani preferences) 
-            // nabidne se registrace, nebo login
-            else {
-            	Log.i("KeepDoin", "user NOT logged");
-            	setContentView(R.layout.login_registration);
-            }
-        }
+        else
+        	setContentView(R.layout.login_registration);
     }
 
-
-
-    public void closeApp(View view) {
-    	finish();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.registration_menu, menu);
+        return true;
     }
 
-
-
-    /**
-     * Handles onClick event on the Submit button. Sends username/password to
-     * the server for authentication.
-     * 
-     * @param view The Submit button for which this method is invoked
-     */
-    public void handleLogin(View view) {
-        Log.i("KeepDoin", "handleLogin()");
-        
-        // gets global class
-        KeepDoinApplication global = (KeepDoinApplication) getApplication();
-        if(!global.isNetworkAvailable()) {
-        	Context context = getApplicationContext();
-        	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
-        	toast.show();
-        	return;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.server:
+        case R.id.secret:
+            doSetup(item.getItemId());
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
-        
-        this.dialogMsg = getText(R.string.ui_activity_authenticating);
-        authType = authTypes.AUTH_LOGIN;
-        
-        showProgress();
-        Log.i("KeepDoin", "Starting thread!");
-
-        // Start authenticating...
-        mAuthThread = GameModel.attemptAuth(this.accountName, "login", mHandler, KeepDoin.this);
     }
+ 
+    private void doSetup(final int itemId) {
+    	final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		final EditText input = new EditText(this);
+		
+		if (itemId == R.id.server)
+			input.setText(getRemoteAPIUrl());
+		else
+			input.setText(getSecret());
+		alert.setView(input);
 
+		alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				String value = input.getText().toString().trim();
+				if (itemId == R.id.server)
+					setRemoteAPIUrl(value);
+				else
+					setSecret(value);
+			}
+		});
 
+		alert.setNegativeButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						dialog.cancel();
+					}
+				});
 
-    /**
-     * Handles onClick event on the Submit button. Sends username/password to
-     * the server for authentication.
-     * 
-     * @param view The Submit button for which this method is invoked
-     */
-    public void handleRegistration(View view) {
-        Log.i("KeepDoin", "handleRegistration()");
-        
-        // gets global class
-        KeepDoinApplication global = (KeepDoinApplication) getApplication();
-        if(!global.isNetworkAvailable()) {
-        	Context context = getApplicationContext();
-        	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
-        	toast.show();
-        	return;
-        }
-
-        
-        this.dialogMsg = getText(R.string.ui_activity_registering);
-        authType = authTypes.AUTH_REG;
-        
-        showProgress();
-        Log.i("KeepDoin", "Starting thread!");
-            
-        // Start authenticating...
-        mAuthThread = GameModel.attemptAuth(this.accountName, "registration", mHandler, KeepDoin.this);
-
+		alert.show();
     }
     
-
-
-    /**
-     * Shows the progress UI for a lengthy operation.
-     */
-    protected void showProgress() {
-        showDialog(0);
+    public void handleLogin(View view) {
+    	Log.i("KeepDoin", "handleLogin()");
+    	
+    	KeepDoinApplication global = (KeepDoinApplication) getApplication();
+    	if (!global.isNetworkAvailable()) {
+        	Context context = getApplicationContext();
+        	Toast toast = Toast.makeText(context, getText(R.string.no_internet_connection), Toast.LENGTH_SHORT);
+        	toast.show();
+    	} else {
+    		showDialog(0);
+    		mAuthThread = GameModel.attemptAuth(this.accountName, mHandler, KeepDoin.this);
+    	}
     }
 
-
-
-    /**
-     * pretizena metoda pro vytvareni dialogu - pokud se zavoila showDialog, tak se vola tato metoda
-     * 
-     * zobrazi lodovaci dialog
-     */
+    @Override
     protected Dialog onCreateDialog(int id) {
         final ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage(this.dialogMsg);
+        dialog.setMessage(getText(R.string.ui_activity_authenticating));
         dialog.setIndeterminate(true);
         dialog.setCancelable(true);
         dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -214,74 +132,23 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
         return dialog;
     }
 
-
-
-    /**
-     * Called when the authentication process completes (see attemptLogin()).
-     */
     public void onAuthenticationResult(boolean result) {
         Log.i("KeepDoin", "onAuthenticationResult(" + result + ")");
 
         dismissDialog(0);
 
-        if (authType == authTypes.AUTH_LOGIN) {
-        	if(result) {
-        		saveLogin();
-        		finishAuth();
-        	}
-        	else {
-        		Log.e("KeepDoin", "onAuthenticationResult: AUTH_LOGIN fail");
-                mMessage = (TextView) findViewById(R.id.notices);
-                mMessage.setText(getText(R.string.login_activity_loginfail));
-        	}
-        }
-        else if (authType == authTypes.AUTH_REG) {
-        	if(result) {
-        		saveLogin();
-        		finishAuth();
-        	}
-        	else {
-        		Log.e("KeepDoin", "onAuthenticationResult: AUTH_REG fail");
-                mMessage = (TextView) findViewById(R.id.notices);
-                mMessage.setText(getText(R.string.login_activity_regfail));
-        	}
-        
+        if (result) {
+        	Log.e("KeepDoin", "authentication successful!");
+        	finishAuth();
         } else {
-        	Log.e("KeepDoin", "onAuthenticationResult: UNKNOWN ERROR");
-            mMessage = (TextView) findViewById(R.id.notices);
-            mMessage.setText(getText(R.string.unknown_error));
+        	Log.e("KeepDoin", "authentication failed!");
+        	TextView view = (TextView) findViewById(R.id.notices);
+        	view.setText(getText(R.string.login_activity_loginfail));
         }
     }
 
-    
-    
-    private void saveLogin() {
-    	// saves local preferences
-    	// permanent login 
-    	SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("userLogged", true);
-        editor.putInt("accountId", accountId);
-        editor.commit();	// need to commit changes before it ends
-        
-    }
-    
-
-
-    /**
-     * 
-     * po uspesnem prihlaseni/registraci se zobrazi timto obrazovka(aktivita) s aplikaci
-     * 
-     * @param the confirmCredentials result.
-     */
     protected void finishAuth() {
         Log.i("KeepDoin", "finishAuth()");
-
-        // stores account informations to global storage
-        KeepDoinApplication global = (KeepDoinApplication) getApplication();
-        global.accountId = this.accountId;
-        global.accountName = this.accountName;
-
 
         // database check, one two, one two, check check!!!
         try {
@@ -294,10 +161,41 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
         
         startApp();
     }
-    
-    @Override
+
+	public void startApp() {
+        Intent intent = new Intent(KeepDoin.this, MainWindow.class);
+
+        Log.i("KeepDoin", "starting activity MainWindow");
+        startActivity(intent);
+	}
+
+	private String getGoogleAccount() {
+        Account[] accts = AccountManager.get(this).getAccounts(); 
+        for(int i = 0; i < accts.length; i++) {
+        	Log.d("KeepDoin", accts[i].type+"-/-"+accts[i].name);
+        	if(accts[i].type.equals("com.google")) {
+        		Log.i("KeepDoin", "account found: "+accts[i].name);
+        		return accts[i].name;
+        	}
+        }
+        return "";
+    }
+
+	@Override
 	public int getAccountId() {
-		return accountId;
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		return settings.getInt("accountId", 0);
+	}
+
+	@Override
+	public void setAccountId(int id) {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		Editor editor = settings.edit();
+		editor.putInt("accountId", id);
+		editor.commit();
+		
+		KeepDoinApplication app = (KeepDoinApplication) getApplication();
+		app.accountId = id;
 	}
 
 	@Override
@@ -305,23 +203,44 @@ public class KeepDoin extends Activity implements AccountInfoHolder {
 		return accountName;
 	}
 
-	
-	public void startApp() {
-        Intent intent = new Intent(KeepDoin.this, MainWindow.class);
-
-        Log.i("KeepDoin", "starting activity MainWindow");
-        startActivity(intent);
-	}
-	
-	@Override
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
-
 	@Override
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
 	}
 	
+	public String getRemoteAPIUrl() {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		return settings.getString("remoteAPIUrl", "http://todogame.michalsvec.cz/api/");
+	}
 	
+	public void setRemoteAPIUrl(String server) {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		Editor editor = settings.edit();
+		editor.putString("remoteAPIUrl", server);
+		editor.commit();
+	}
+
+	public String getSecret() {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		return settings.getString("secret", "");
+	}
+	
+	public void setSecret(String keyString) {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		Editor editor = settings.edit();
+		editor.putString("secret", keyString);
+		editor.commit();
+	}
+	
+	public Boolean getRegistred() {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		return settings.getBoolean("registred", false);
+	}
+	
+	public void setRegistred(Boolean value) {
+		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		Editor editor = settings.edit();
+		editor.putBoolean("registred", value);
+		editor.commit();
+	}
 }

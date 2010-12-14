@@ -6,13 +6,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import cz.vutbr.fit.tam.and10.KeepDoin;
 import cz.vutbr.fit.tam.and10.MainMenu;
 import cz.vutbr.fit.tam.and10.R;
 import cz.vutbr.fit.tam.and10.helpers.User;
-import cz.vutbr.fit.tam.and10.ui.BadgesAdapter;
 
 public class MeTab extends Activity implements AccountInfoHolder {
 	
@@ -24,10 +24,10 @@ public class MeTab extends Activity implements AccountInfoHolder {
 
 
         // launch intent - we get user ID from extra
-        int userId = 1;
+        int userId = 4;
         
-//    	KeepDoin appState = ((KeepDoin)getApplicationContext());
-//    	userId = appState.accountId;
+    	// KeepDoin appState = ((KeepDoin) getApplicationContext());
+    	// userId = appState.getAccountId();
 
         // nastaveni layoutu pro friendy
         setContentView(R.layout.user_detail);
@@ -42,12 +42,20 @@ public class MeTab extends Activity implements AccountInfoHolder {
 		} catch (IOException e) {
 			Toast.makeText(this, "Synchronize first. Then, you'll see some really nice guy here.", Toast.LENGTH_LONG).show();
 		}
-        TextView real_name = (TextView) findViewById(R.id.real_name);
-        real_name.setText(user.getName());
-        
-        TextView rank = (TextView) findViewById(R.id.rank);
-        rank.setText("rank:"+user.getRank());
-
+       
+		String email = user.getEmail();
+		setRealName(email.substring(0, email.indexOf("@")));
+		setRank(user.getRank());
+    }
+    
+    public void setRealName(String name) {
+    	TextView view = (TextView) findViewById(R.id.real_name);
+    	view.setText(name);
+    }
+    
+    public void setRank(String rank) {
+    	TextView view = (TextView) findViewById(R.id.rank);
+    	view.setText("rank: " + rank);
     }
     
     private MainMenu menu;
