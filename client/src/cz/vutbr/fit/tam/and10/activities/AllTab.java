@@ -13,7 +13,7 @@ import cz.vutbr.fit.tam.and10.category.Category;
 import cz.vutbr.fit.tam.and10.task.Task;
 import cz.vutbr.fit.tam.and10.task.Tasks;
 
-public class AllTab extends Activity implements AccountInfoHolder, TaskListTab {
+public class AllTab extends Activity implements AccountInfoHolder {
 	
 	private String accountName;
 	private int accountId;
@@ -84,10 +84,5 @@ public class AllTab extends Activity implements AccountInfoHolder, TaskListTab {
 	@Override
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
-	}
-
-	@Override
-	public Tasks getTasks() {
-		return tasks;
 	}
 }
