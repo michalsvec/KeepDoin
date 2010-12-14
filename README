@@ -8,4 +8,29 @@ Authors
 
 Michal Svec <kontakt@michalsvec.cz>
 Jan Javorek <honza@javorek.net>
+Pavel Zuna
+
+
+Instalace a spusteni
+--------------------
+
+
+Pro spusteni aplikace je nutne mit spravne nainstalovane SDK a ADT plugin
+pro Eclipse IDE.
+
+Postup instalace: http://developer.android.com/sdk/installing.html
+
+Dale je nutne pridat projekt do workspace:
+File -> New -> Android Project
+
+Create project from existing source - vybrat cestu do slozky KeepDoin/client/ 
+a zadat nazev projektu. Napr. KeepDoin
+
+Pak uz je mozne spustit aplikaci pomoci Run->Run
+
+Pro beh aplikace je nutne Android API level 8. Je tedy nutne pripojit
+telefon s Android 2.2 nebo vytvorit emulator s Google API 8.
+
+
+
 
